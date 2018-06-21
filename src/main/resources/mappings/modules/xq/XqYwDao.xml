@@ -15,10 +15,12 @@
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
 		a.remarks AS "remarks",
-		a.del_flag AS "delFlag"
+		a.del_flag AS "delFlag",
+		u.name AS "createBy.name"
 	</sql>
 	
 	<sql id="xqYwJoins">
+		LEFT JOIN sys_user u ON u.login_name = a.create_by
 	</sql>
     
 	<select id="get" resultType="XqYw">
@@ -38,6 +40,9 @@
 			a.del_flag = #{DEL_FLAG_NORMAL}
 			<if test="xqId != null and xqId != ''">
 				AND a.xq_id = #{xqId}
+			</if>
+			<if test="xqTitle != null and xqTitle != ''">
+				AND a.xq_title = #{xqTitle}
 			</if>
 		</where>
 		<choose>
