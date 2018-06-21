@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.xq.dao.XqFjclDao">
+    
+	<sql id="xqFjclColumns">
+		a.fjcl_id AS "fjclId",
+		a.xq_id AS "xqId",
+		a.fjcl_code AS "fjclCode",
+		a.fjcl_name AS "fjclName",
+		a.fjcl_ext AS "fjclExt",
+		a.fjcl_url AS "fjclUrl",
+		a.fjcl_size AS "fjclSize",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="xqFjclJoins">
+	</sql>
+    
+	<select id="get" resultType="XqFjcl">
+		SELECT 
+			<include refid="xqFjclColumns"/>
+		FROM xq_fjcl a
+		<include refid="xqFjclJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="XqFjcl">
+		SELECT 
+			<include refid="xqFjclColumns"/>
+		FROM xq_fjcl a
+		<include refid="xqFjclJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="xqId != null and xqId != ''">
+				AND a.xq_id = #{xqId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="XqFjcl">
+		SELECT 
+			<include refid="xqFjclColumns"/>
+		FROM xq_fjcl a
+		<include refid="xqFjclJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO xq_fjcl(
+			fjcl_id,
+			xq_id,
+			fjcl_code,
+			fjcl_name,
+			fjcl_ext,
+			fjcl_url,
+			fjcl_size,
+			del_flag
+		) VALUES (
+			#{fjclId},
+			#{xqId},
+			#{fjclCode},
+			#{fjclName},
+			#{fjclExt},
+			#{fjclUrl},
+			#{fjclSize},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE xq_fjcl SET 	
+			fjcl_id = #{fjclId},
+			xq_id = #{xqId},
+			fjcl_code = #{fjclCode},
+			fjcl_name = #{fjclName},
+			fjcl_ext = #{fjclExt},
+			fjcl_url = #{fjclUrl},
+			fjcl_size = #{fjclSize}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE xq_fjcl SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
