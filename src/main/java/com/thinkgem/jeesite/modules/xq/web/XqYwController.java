@@ -61,6 +61,13 @@ public class XqYwController extends BaseController {
 		return "modules/xq/xqYwForm";
 	}
 
+	@RequiresPermissions("xq:xqYw:view")
+	@RequestMapping(value = "add")
+	public String form() {
+
+		return "modules/xq/xqYwAdd";
+	}
+
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "save")
 	public String save(XqYw xqYw, Model model, RedirectAttributes redirectAttributes) {

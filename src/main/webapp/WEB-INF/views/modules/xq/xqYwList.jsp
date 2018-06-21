@@ -19,7 +19,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/xq/xqYw/">需求列表</a></li>
-		<shiro:hasPermission name="xq:xqYw:edit"><li><a href="${ctx}/xq/xqYw/form">需求添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="xq:xqYw:edit"><li><a href="${ctx}/xq/xqYw/add">需求添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="xqYw" action="${ctx}/xq/xqYw/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
