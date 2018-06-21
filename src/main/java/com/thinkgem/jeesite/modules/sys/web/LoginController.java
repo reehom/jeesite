@@ -129,7 +129,7 @@ public class LoginController extends BaseController{
 	/**
 	 * 登录成功，进入管理首页
 	 */
-	@RequiresPermissions("user")
+	//@RequiresPermissions("user")
 	@RequestMapping(value = "${adminPath}")
 	public String index(HttpServletRequest request, HttpServletResponse response) {
 		Principal principal = UserUtils.getPrincipal();
