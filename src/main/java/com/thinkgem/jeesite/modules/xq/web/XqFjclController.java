@@ -81,4 +81,10 @@ public class XqFjclController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/xq/xqFjcl/?repage";
 	}
 
+	@RequestMapping(value = "success")
+	public String success(XqFjcl xqFjcl, Model model) {
+
+		return "modules/xq/commitSuccess";
+	}
+
 }

@@ -39,7 +39,7 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 	@Transactional(readOnly = false)
 	public void save(XqYw xqYw) {
 		Date date = new Date();
-		String XqId = "XQ"+DateTimeUtil.IdGenStr(date)
+		String XqId = "XQ"+DateTimeUtil.IdGenStr(date);
 		xqYw.setXqId(XqId);
 		super.save(xqYw);
 	}
