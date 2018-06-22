@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.modules.xq;
+package com.thinkgem.jeesite.modules.xq.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;

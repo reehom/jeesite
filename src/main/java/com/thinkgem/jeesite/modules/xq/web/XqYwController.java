@@ -6,6 +6,7 @@ package com.thinkgem.jeesite.modules.xq.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.thinkgem.jeesite.modules.xq.common.Const;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thinkgem.jeesite.common.config.Global;
@@ -21,6 +24,9 @@ import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.modules.xq.entity.XqYw;
 import com.thinkgem.jeesite.modules.xq.service.XqYwService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 需求业务表Controller
@@ -63,18 +69,19 @@ public class XqYwController extends BaseController {
 
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = "add")
-	public String form() {
-
+	public String form(Model model) {
+		model.addAttribute("systemLists",Const.SystemLists.systemLists);
 		return "modules/xq/xqYwAdd";
 	}
 
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "save")
-	public String save(XqYw xqYw, Model model, RedirectAttributes redirectAttributes) {
+	public String save(XqYw xqYw, Model model, RedirectAttributes redirectAttributes,@RequestParam(value="files",required = false) MultipartFile multipartFiles[]) {
 		if (!beanValidator(model, xqYw)){
 			return form(xqYw, model);
 		}
 		xqYwService.save(xqYw);
+
 		addMessage(redirectAttributes, "保存需求成功");
 		return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
 	}
