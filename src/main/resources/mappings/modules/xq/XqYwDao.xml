@@ -20,7 +20,7 @@
 	</sql>
 	
 	<sql id="xqYwJoins">
-		LEFT JOIN sys_user u ON u.login_name = a.create_by
+		LEFT JOIN sys_user u ON u.id = a.create_by
 	</sql>
     
 	<select id="get" resultType="XqYw">

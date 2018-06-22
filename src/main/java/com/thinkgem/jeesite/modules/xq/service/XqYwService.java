@@ -6,7 +6,7 @@ package com.thinkgem.jeesite.modules.xq.service;
 import java.util.Date;
 import java.util.List;
 
-import com.thinkgem.jeesite.modules.xq.DateTimeUtil;
+import com.thinkgem.jeesite.modules.xq.utils.DateTimeUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
