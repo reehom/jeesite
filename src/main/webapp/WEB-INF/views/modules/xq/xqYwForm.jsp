@@ -5,9 +5,17 @@
 	<title>需求管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
-		$(document).ready(function() {
-			//$("#name").focus();
-			$("#inputForm").validate({
+
+            $(document).ready(function() {
+                //$("#name").focus();
+
+                var status = ${xqYw.delFlag};
+                if(status=="0"){
+                    $("#xqXqxh").attr("readOnly",true);
+                }
+
+
+                $("#inputForm").validate({
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
 					form.submit();
@@ -32,14 +40,10 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="xqYw" action="${ctx}/xq/xqYw/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
-		<div class="control-group">
-			<label class="control-label">xq_id：</label>
-			<div class="controls">
-				<form:input path="xqId" htmlEscape="false" maxlength="64" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
+		<form:hidden path="delFlag"/>
+		<sys:message content="${message}"/>
+		<form:hidden path="xqId" htmlEscape="false" maxlength="64" class="input-xlarge required"/>
+
 		<div class="control-group">
 			<label class="control-label">xq_title：</label>
 			<div class="controls">
@@ -64,13 +68,13 @@
 		<div class="control-group">
 			<label class="control-label">需求描述：</label>
 			<div class="controls">
-				<form:textarea path="xqXqms" htmlEscape="false" rows="4" maxlength="255" class="input-xxlarge "/>
+				<form:textarea path="xqXqms" htmlEscape="false" rows="4" maxlength="2047" class="input-xxlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">需求细化：</label>
 			<div class="controls">
-				<form:textarea path="xqXqxh" htmlEscape="false" rows="4" maxlength="255" class="input-xxlarge "/>
+				<form:textarea path="xqXqxh" htmlEscape="false" rows="4" maxlength="2047" class="input-xxlarge " />
 			</div>
 		</div>
 		<div class="control-group">

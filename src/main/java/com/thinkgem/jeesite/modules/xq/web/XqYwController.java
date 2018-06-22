@@ -71,6 +71,7 @@ public class XqYwController extends BaseController {
 	@RequestMapping(value = "add")
 	public String form(Model model) {
 		model.addAttribute("systemLists",Const.SystemLists.systemLists);
+		model.addAttribute("resourcesLists",Const.XQResource.resourcesLists);
 		return "modules/xq/xqYwAdd";
 	}
 

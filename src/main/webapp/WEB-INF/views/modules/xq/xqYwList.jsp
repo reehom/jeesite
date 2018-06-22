@@ -74,7 +74,7 @@
 					${xqYw.xqSsxt}
 			</td>
 			<td>
-				<a href="${ctx}/xq/xqYw/form?id=${xqYw.id}">
+				<a href="${ctx}/xq/xqYw/form?id=${xqYw.xqId}">
 						${xqYw.xqTitle}
 				</a>
 			</td>

@@ -13,4 +13,11 @@ public class Const {
         String SUCAI="速裁管理平台";
         List<String> systemLists = Lists.newArrayList(EJIAN,JIXIAO,SUCAI);
     }
+
+    public interface XQResource{
+        String XIANSHANG = "线上";
+        String DIANHUA = "电话等级";
+        String XIANCHANG = "现场工作";
+        List<String> resourcesLists = Lists.newArrayList(XIANSHANG,DIANHUA,XIANCHANG);
+    }
 }
