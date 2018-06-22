@@ -46,7 +46,7 @@ public class XqYwController extends BaseController {
 		return entity;
 	}
 	
-	//@RequiresPermissions("xq:xqYw:view")
+	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(XqYw xqYw, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<XqYw> page = xqYwService.findPage(new Page<XqYw>(request, response), xqYw); 
@@ -54,14 +54,21 @@ public class XqYwController extends BaseController {
 		return "modules/xq/xqYwList";
 	}
 
-	//@RequiresPermissions("xq:xqYw:view")
+	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = "form")
 	public String form(XqYw xqYw, Model model) {
 		model.addAttribute("xqYw", xqYw);
 		return "modules/xq/xqYwForm";
 	}
 
-	//@RequiresPermissions("xq:xqYw:edit")
+	@RequiresPermissions("xq:xqYw:view")
+	@RequestMapping(value = "add")
+	public String form() {
+
+		return "modules/xq/xqYwAdd";
+	}
+
+	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "save")
 	public String save(XqYw xqYw, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, xqYw)){
@@ -72,7 +79,7 @@ public class XqYwController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
 	}
 	
-	//@RequiresPermissions("xq:xqYw:edit")
+	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "delete")
 	public String delete(XqYw xqYw, RedirectAttributes redirectAttributes) {
 		xqYwService.delete(xqYw);

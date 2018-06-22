@@ -3,8 +3,10 @@
  */
 package com.thinkgem.jeesite.modules.xq.service;
 
+import java.util.Date;
 import java.util.List;
 
+import com.thinkgem.jeesite.modules.xq.DateTimeUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,9 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 	
 	@Transactional(readOnly = false)
 	public void save(XqYw xqYw) {
+		Date date = new Date();
+		String XqId = "XQ"+DateTimeUtil.IdGenStr(date)
+		xqYw.setXqId(XqId);
 		super.save(xqYw);
 	}
 	
