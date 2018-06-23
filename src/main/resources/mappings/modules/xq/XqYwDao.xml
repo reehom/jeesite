@@ -28,7 +28,7 @@
 			<include refid="xqYwColumns"/>
 		FROM xq_yw a
 		<include refid="xqYwJoins"/>
-		WHERE a.id = #{id}
+		WHERE a.xq_id = #{xqId}
 	</select>
 	
 	<select id="findList" resultType="XqYw">
@@ -117,7 +117,7 @@
 			update_by = #{updateBy.id},
 			update_date = #{updateDate},
 			remarks = #{remarks}
-		WHERE id = #{id}
+		WHERE xq_id = #{xqId}
 	</update>
 	
 	<update id="delete">

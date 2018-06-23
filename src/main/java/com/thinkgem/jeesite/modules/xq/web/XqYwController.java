@@ -63,6 +63,8 @@ public class XqYwController extends BaseController {
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = "form")
 	public String form(XqYw xqYw, Model model) {
+		model.addAttribute("systemLists",Const.SystemLists.systemLists);
+		model.addAttribute("resourcesLists",Const.XQResource.resourcesLists);
 		model.addAttribute("xqYw", xqYw);
 		return "modules/xq/xqYwForm";
 	}
@@ -77,7 +79,7 @@ public class XqYwController extends BaseController {
 
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "save")
-	public String save(XqYw xqYw, Model model, RedirectAttributes redirectAttributes,@RequestParam(value="files",required = false) MultipartFile multipartFiles[]) {
+	public String save(XqYw xqYw, Model  model, RedirectAttributes redirectAttributes,@RequestParam(value="files",required = false) MultipartFile multipartFiles[]) {
 		if (!beanValidator(model, xqYw)){
 			return form(xqYw, model);
 		}
