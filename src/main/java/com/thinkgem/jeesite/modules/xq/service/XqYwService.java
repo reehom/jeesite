@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.modules.xq.utils.DateTimeUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,9 @@ import com.thinkgem.jeesite.modules.xq.dao.XqYwDao;
 @Transactional(readOnly = true)
 public class XqYwService extends CrudService<XqYwDao, XqYw> {
 
+	@Autowired
+	private XqYwDao xqYwDao;
+
 	public XqYw get(String id) {
 		return super.get(id);
 	}
@@ -33,8 +37,11 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 		return super.findList(xqYw);
 	}
 	
-	public Page<XqYw> findPage(Page<XqYw> page, XqYw xqYw) {
-		return super.findPage(page, xqYw);
+	public Page<XqYw> findPage(Page<XqYw> page, XqYw xqYw,String status) {
+		xqYw.setPage(page);
+		page.setList(xqYwDao.findList(xqYw,status));
+		return page;
+//		return super.findPage(page, xqYw);
 	}
 	
 	@Transactional(readOnly = false)

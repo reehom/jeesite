@@ -31,23 +31,25 @@
 		WHERE a.xq_id = #{xqId}
 	</select>
 	
-	<select id="findList" resultType="XqYw">
+	<select id="findList" resultType="XqYw" parameterType="map">
 		SELECT 
 			<include refid="xqYwColumns"/>
 		FROM xq_yw a
 		<include refid="xqYwJoins"/>
 		<where>
-			a.del_flag = #{DEL_FLAG_NORMAL}
-			<if test="xqId != null and xqId != ''">
-				AND a.xq_id = #{xqId}
+			<if test="status != null and status != ''">
+			a.del_flag = #{status}
+            </if>
+			<if test="XqYw.xqId != null and XqYw.xqId != ''">
+				AND a.xq_id = #{XqYw.xqId}
 			</if>
-			<if test="xqTitle != null and xqTitle != ''">
-				AND a.xq_title = #{xqTitle}
+			<if test="XqYw.xqTitle != null and XqYw.xqTitle != ''">
+				AND a.xq_title = #{XqYw.xqTitle}
 			</if>
 		</where>
 		<choose>
-			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				ORDER BY ${page.orderBy}
+			<when test="XqYw.page !=null and XqYw.page.orderBy != null and XqYw.page.orderBy != ''">
+				ORDER BY ${XqYw.page.orderBy}
 			</when>
 			<otherwise>
 				ORDER BY a.update_date DESC
@@ -114,6 +116,7 @@
 			xq_xqms = #{xqXqms},
 			xq_xqxh = #{xqXqxh},
 			xq_shr = #{xqShr},
+			del_flag = #{delFlag},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate},
 			remarks = #{remarks}

@@ -8,14 +8,12 @@
 
             $(document).ready(function() {
                 //$("#name").focus();
+				$("#xqSsxt").attr("readOnly",true);
+				$("#xqXqly").attr("readOnly",true);
+				$("#xqShr").attr("readOnly",true);
+                $("#xqTitle").attr("readOnly",true);
+                $("#xqXqms").attr("readOnly",true);
 
-                var status = ${xqYw.delFlag};
-                if(status=="0"){
-                    $("#xqXqxh").attr("readOnly",true);
-                    $("#xqShr").attr("readOnly",true);
-                }
-                var xqSsxt = '${xqYw.xqSsxt}';
-                $("#xqSsxt").select(xqSsxt);
 
                 $("#inputForm").validate({
 				submitHandler: function(form){
@@ -38,9 +36,9 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/xq/xqYw/">需求列表</a></li>
-		<li class="active"><a href="${ctx}/xq/xqYw/form?id=${xqYw.id}">需求<shiro:hasPermission name="xq:xqYw:edit">${not empty xqYw.xqId?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="xq:xqYw:edit">查看</shiro:lacksPermission></a></li>
+		<li class="active"><a href="${ctx}/xq/xqYw/form?id=${xqYw.id}">需求<shiro:hasPermission name="xq:xqYw:edit">${not empty xqYw.xqId?'审核':'添加'}</shiro:hasPermission><shiro:lacksPermission name="xq:xqYw:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
-	<form:form id="inputForm" modelAttribute="xqYw" action="${ctx}/xq/xqYw/save" method="post" class="form-horizontal" enctype="multipart/form-data">
+	<form:form id="inputForm" modelAttribute="xqYw"  action="#" method="post" class="form-horizontal" enctype="multipart/form-data">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
 		<form:hidden path="xqId" htmlEscape="false" maxlength="64" class="input-xlarge required"/>
@@ -55,21 +53,15 @@
 		<div class="control-group">
 			<label class="control-label">所属系统：</label>
 			<div class="controls">
-				<form:select path="xqSsxt" htmlEscape="false"
-							 maxlength="64" class="input-xlarge required"  style = "width:285px;" items="${systemLists}"
-				>
-				</form:select>
+				<form:input path="xqSsxt" htmlEscape="false" maxlength="255" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">需求来源：</label>
 			<div class="controls">
-				<form:select path="xqXqly" htmlEscape="false"
-							 maxlength="64" class="input-xlarge required"  style = "width:285px;" items="${resourcesLists}"
-				>
-				</form:select>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="xqXqly" htmlEscape="false" maxlength="255" class="input-xlarge required"/>
+				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
 		<div class="control-group">
@@ -97,9 +89,23 @@
 			<%--</div>--%>
 		<%--</div>--%>
 		<div class="form-actions">
-			<shiro:hasPermission name="xq:xqYw:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="xq:xqYw:edit"><input id="passBtn" class="btn" type="button" value="同意" onclick="pass()"/></shiro:hasPermission>
+			<shiro:hasPermission name="xq:xqYw:edit"><input id="noPassBtn" class="btn" type="button" value="不同意" onclick="noPass()"/></shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+
+
+	<script>
+        function pass() {
+			document.getElementById("inputForm").action="${ctx}/xq/xqYw/save?action='access'";
+            $("#inputForm").submit();
+        }
+        function noPass(){
+            document.getElementById("inputForm").action="${ctx}/xq/xqYw/save?action='deny'";
+            $("#inputForm").submit();
+        }
+	</script>
 </body>
 </html>
+

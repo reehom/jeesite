@@ -54,8 +54,8 @@ public class XqYwController extends BaseController {
 	
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(XqYw xqYw, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<XqYw> page = xqYwService.findPage(new Page<XqYw>(request, response), xqYw); 
+	public String list(XqYw xqYw, HttpServletRequest request, HttpServletResponse response, Model model,@RequestParam(value = "status",required = false)String status) {
+		Page<XqYw> page = xqYwService.findPage(new Page<XqYw>(request, response), xqYw,status); 
 		model.addAttribute("page", page);
 		return "modules/xq/xqYwList";
 	}
@@ -79,12 +79,19 @@ public class XqYwController extends BaseController {
 
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "save")
-	public String save(XqYw xqYw, Model  model, RedirectAttributes redirectAttributes,@RequestParam(value="files",required = false) MultipartFile multipartFiles[]) {
+	public String save(XqYw xqYw, Model  model, RedirectAttributes redirectAttributes,@RequestParam(value="files",required = false) MultipartFile multipartFiles[],@RequestParam(value="action",required = false)String action) {
 		if (!beanValidator(model, xqYw)){
 			return form(xqYw, model);
 		}
+		System.out.println(action);
+		if(StringUtils.isNotBlank(action)){
+			if(StringUtils.equals(action,Const.XQStatus.ACCESS)){
+					xqYw.setDelFlag(Const.XQStatus.PASS);
+			}else if(StringUtils.equals(action,Const.XQStatus.DENY)){
+				   xqYw.setDelFlag(Const.XQStatus.NO_PASS);
+			}
+		}
 		xqYwService.save(xqYw);
-
 		addMessage(redirectAttributes, "保存需求成功");
 		return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
 	}
@@ -95,6 +102,15 @@ public class XqYwController extends BaseController {
 		xqYwService.delete(xqYw);
 		addMessage(redirectAttributes, "删除需求成功");
 		return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
+	}
+
+	//跳转审核页面
+	@RequiresPermissions("xq:xqYw:view")
+	@RequestMapping(value = "audit")
+	public String audit(XqYw xqYw,Model model) {
+		model.addAttribute("xqYw", xqYw);
+		model.addAttribute("xqYw", xqYw);
+		return "modules/xq/xqYwAudit";
 	}
 
 }
