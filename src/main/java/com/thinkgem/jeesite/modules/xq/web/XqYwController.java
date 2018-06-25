@@ -6,8 +6,10 @@ package com.thinkgem.jeesite.modules.xq.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.thinkgem.jeesite.common.utils.IdGen;
+import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 import com.thinkgem.jeesite.modules.xq.common.Const;
+import com.thinkgem.jeesite.modules.xq.entity.XqLsjl;
+import com.thinkgem.jeesite.modules.xq.service.XqLsjlService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,6 +29,7 @@ import com.thinkgem.jeesite.modules.xq.entity.XqYw;
 import com.thinkgem.jeesite.modules.xq.service.XqYwService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,7 +43,10 @@ public class XqYwController extends BaseController {
 
 	@Autowired
 	private XqYwService xqYwService;
-	
+
+	@Autowired
+	private XqLsjlService xqLsjlService;
+
 	@ModelAttribute
 	public XqYw get(@RequestParam(required=false) String id) {
 		XqYw entity = null;
@@ -55,8 +61,10 @@ public class XqYwController extends BaseController {
 	
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(XqYw xqYw, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<XqYw> page = xqYwService.findPage(new Page<XqYw>(request, response), xqYw); 
+	public String list(XqYw xqYw, HttpServletRequest request, HttpServletResponse response, Model model,@RequestParam(value = "status",required = false)String status) {
+		Page<XqYw> page = xqYwService.findPage(new Page<XqYw>(request, response), xqYw,status);
+		String userType = UserUtils.getUser().getUserType();
+		model.addAttribute("userType",userType);
 		model.addAttribute("page", page);
 		return "modules/xq/xqYwList";
 	}
@@ -64,7 +72,11 @@ public class XqYwController extends BaseController {
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = "form")
 	public String form(XqYw xqYw, Model model) {
+		model.addAttribute("systemLists",Const.SystemLists.systemLists);
+		model.addAttribute("resourcesLists",Const.XQResource.resourcesLists);
 		model.addAttribute("xqYw", xqYw);
+		List<XqLsjl> recordLists= xqLsjlService.findRecordList(xqYw.getXqId());
+		model.addAttribute("recordLists",recordLists);
 		return "modules/xq/xqYwForm";
 	}
 
@@ -72,17 +84,62 @@ public class XqYwController extends BaseController {
 	@RequestMapping(value = "add")
 	public String form(Model model) {
 		model.addAttribute("systemLists",Const.SystemLists.systemLists);
+		model.addAttribute("resourcesLists",Const.XQResource.resourcesLists);
 		return "modules/xq/xqYwAdd";
 	}
 
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "save")
-	public String save(XqYw xqYw, Model model, HttpServletRequest req, RedirectAttributes redirectAttributes,@RequestParam(value="files",required = false) MultipartFile multipartFiles[]) {
+	public String save(XqYw xqYw, Model  model, RedirectAttributes redirectAttributes,@RequestParam(value="files",required = false) MultipartFile multipartFiles[],@RequestParam(value="action",required = false)String action) {
 		if (!beanValidator(model, xqYw)){
 			return form(xqYw, model);
 		}
-		xqYwService.save(xqYw);
+		if(StringUtils.isNotBlank(action)){
+			if(StringUtils.equals(action,Const.XQStatus.ACCESS)){
+					xqYw.setDelFlag(Const.XQStatus.PASS);
+					xqYw.setXqShr(UserUtils.getUser().getName());
+			}else if(StringUtils.equals(action,Const.XQStatus.DENY)){
+				   xqYw.setDelFlag(Const.XQStatus.NO_PASS);
+					xqYw.setXqShr(UserUtils.getUser().getName());
+			}else if(StringUtils.equals(action,Const.XQStatus.EDIT)){
+					xqYw.setDelFlag(Const.XQStatus.TO_BE_AUDITED);
+			}
 
+		}
+
+		/*
+		* 生成操作历史记录
+		* xqYw  id 为空时为建立操作
+		*  action = acess  为审核通过
+		*  action = deny 为 审核不通过
+		*  action = edit 为修改操作
+		* */
+		XqLsjl xqLsjl = new XqLsjl();
+
+		if(StringUtils.isBlank(xqYw.getXqId())){
+
+			xqLsjl.setXqCznr(xqYw.getXqXqms());
+			xqLsjl.setLsjlJlzt("0");
+		}else{
+			if(StringUtils.isNotBlank(action)){
+				//审核通过
+				if(StringUtils.equals(action,Const.XQStatus.ACCESS)){
+					xqLsjl.setLsjlJlzt("1");
+				//审核不通过
+				}else if(StringUtils.equals(action,Const.XQStatus.DENY)){
+					xqLsjl.setLsjlJlzt("2");
+				}
+				//审核时 需求细化为改动内容
+				xqLsjl.setXqCznr(xqYw.getXqXqxh());
+			}else if(StringUtils.equals(action,Const.XQStatus.EDIT)){
+				xqLsjl.setLsjlJlzt("3");
+				//修改操作   需求描述为改动内容
+				xqLsjl.setXqCznr(xqYw.getXqXqms());
+			}
+		}
+		xqYwService.save(xqYw);
+		xqLsjl.setXqId(xqYw.getXqId());
+		xqLsjlService.save(xqLsjl);
 		addMessage(redirectAttributes, "保存需求成功");
 		return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
 	}
@@ -93,6 +150,15 @@ public class XqYwController extends BaseController {
 		xqYwService.delete(xqYw);
 		addMessage(redirectAttributes, "删除需求成功");
 		return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
+	}
+
+	//跳转审核页面
+	@RequiresPermissions("xq:xqYw:view")
+	@RequestMapping(value = "audit")
+	public String audit(XqYw xqYw,Model model) {
+		model.addAttribute("xqYw", xqYw);
+		model.addAttribute("xqYw", xqYw);
+		return "modules/xq/xqYwAudit";
 	}
 
 }

@@ -67,7 +67,7 @@ public class XqYw extends DataEntity<XqYw> {
 		this.xqXqly = xqXqly;
 	}
 	
-	@Length(min=0, max=255, message="需求描述长度必须介于 0 和 255 之间")
+	@Length(min=0, max=2047, message="需求描述长度必须介于 0 和 2047 之间")
 	public String getXqXqms() {
 		return xqXqms;
 	}
@@ -76,7 +76,7 @@ public class XqYw extends DataEntity<XqYw> {
 		this.xqXqms = xqXqms;
 	}
 	
-	@Length(min=0, max=255, message="需求细化长度必须介于 0 和 255 之间")
+	@Length(min=0, max=2047, message="需求细255化长度必须介于 0 和 255 之间")
 	public String getXqXqxh() {
 		return xqXqxh;
 	}

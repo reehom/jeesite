@@ -3,8 +3,11 @@
  */
 package com.thinkgem.jeesite.modules.xq.service;
 
+import java.util.Date;
 import java.util.List;
 
+import com.thinkgem.jeesite.modules.xq.utils.DateTimeUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +25,9 @@ import com.thinkgem.jeesite.modules.xq.dao.XqLsjlDao;
 @Transactional(readOnly = true)
 public class XqLsjlService extends CrudService<XqLsjlDao, XqLsjl> {
 
+	@Autowired
+	private XqLsjlDao xqLsjlDao;
+
 	public XqLsjl get(String id) {
 		return super.get(id);
 	}
@@ -36,12 +42,19 @@ public class XqLsjlService extends CrudService<XqLsjlDao, XqLsjl> {
 	
 	@Transactional(readOnly = false)
 	public void save(XqLsjl xqLsjl) {
+		Date date = new Date();
+		String id = "JL"+DateTimeUtil.IdGenStr(date)+Math.round(Math.random()*100);
+		xqLsjl.setLsjlId(id);
 		super.save(xqLsjl);
 	}
 	
 	@Transactional(readOnly = false)
 	public void delete(XqLsjl xqLsjl) {
 		super.delete(xqLsjl);
+	}
+
+	public List<XqLsjl> findRecordList(String xqId){
+		return xqLsjlDao.findRecordList(xqId);
 	}
 	
 }

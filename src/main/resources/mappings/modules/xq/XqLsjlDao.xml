@@ -108,5 +108,14 @@
 			del_flag = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
-	
+
+	<select id="findRecordList" resultType="XqLsjl">
+		SELECT
+		<include refid="xqLsjlColumns"/>
+		FROM xq_lsjl a
+		<include refid="xqLsjlJoins"/>
+		where xq_id = #{xqId}
+		ORDER BY create_date DESC
+	</select>
+
 </mapper>

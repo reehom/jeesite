@@ -56,7 +56,10 @@
 	<div class="control-group">
 		<label class="control-label">需求来源：</label>
 		<div class="controls">
-			<form:input path="xqXqly" htmlEscape="false" maxlength="255" class="input-xlarge required"/>
+            <form:select path="xqXqly" htmlEscape="false"
+                         maxlength="64" class="input-xlarge required" items="${resourcesLists}" style = "width:285px;"
+            />
+
 			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
 	</div>

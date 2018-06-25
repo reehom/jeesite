@@ -28,16 +28,45 @@
 			<include refid="xqYwColumns"/>
 		FROM xq_yw a
 		<include refid="xqYwJoins"/>
-		WHERE a.id = #{id}
+		WHERE a.xq_id = #{xqId}
 	</select>
 	
-	<select id="findList" resultType="XqYw">
-		SELECT 
-			<include refid="xqYwColumns"/>
+	<!--<select id="findListByStatus" resultType="XqYw" parameterType="map">-->
+		<!--SELECT-->
+			<!--<include refid="xqYwColumns"/>-->
+		<!--FROM xq_yw a-->
+		<!--<include refid="xqYwJoins"/>-->
+		<!--<where>-->
+			<!--<if test="status != null and status != ''">-->
+			<!--a.del_flag = #{status}-->
+            <!--</if>-->
+			<!--<if test="XqYw.xqId != null and XqYw.xqId != ''">-->
+				<!--AND a.xq_id = #{XqYw.xqId}-->
+			<!--</if>-->
+			<!--<if test="XqYw.xqTitle != null and XqYw.xqTitle != ''">-->
+				<!--AND a.xq_title = #{XqYw.xqTitle}-->
+			<!--</if>-->
+		<!--</where>-->
+		<!--<choose>-->
+			<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
+				<!--ORDER BY ${page.orderBy}-->
+			<!--</when>-->
+			<!--<otherwise>-->
+				<!--ORDER BY a.update_date DESC-->
+			<!--</otherwise>-->
+		<!--</choose>-->
+	<!--</select>-->
+
+
+	<select id="findList" resultType="XqYw" parameterType="map">
+		SELECT
+		<include refid="xqYwColumns"/>
 		FROM xq_yw a
 		<include refid="xqYwJoins"/>
 		<where>
-			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="delFlag != null and delFlag != ''">
+			a.del_flag = #{delFlag}
+			</if>
 			<if test="xqId != null and xqId != ''">
 				AND a.xq_id = #{xqId}
 			</if>
@@ -54,7 +83,7 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<select id="findAllList" resultType="XqYw">
 		SELECT 
 			<include refid="xqYwColumns"/>
@@ -114,10 +143,11 @@
 			xq_xqms = #{xqXqms},
 			xq_xqxh = #{xqXqxh},
 			xq_shr = #{xqShr},
+			del_flag = #{delFlag},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate},
 			remarks = #{remarks}
-		WHERE id = #{id}
+		WHERE xq_id = #{xqId}
 	</update>
 	
 	<update id="delete">
