@@ -107,7 +107,13 @@ public class XqYwController extends BaseController {
 
 		}
 
-
+		/*
+		* 生成操作历史记录
+		* xqYw  id 为空时为建立操作
+		*  action = acess  为审核通过
+		*  action = deny 为 审核不通过
+		*  action = edit 为修改操作
+		* */
 		XqLsjl xqLsjl = new XqLsjl();
 
 		if(StringUtils.isBlank(xqYw.getXqId())){
@@ -116,14 +122,18 @@ public class XqYwController extends BaseController {
 			xqLsjl.setLsjlJlzt("0");
 		}else{
 			if(StringUtils.isNotBlank(action)){
+				//审核通过
 				if(StringUtils.equals(action,Const.XQStatus.ACCESS)){
 					xqLsjl.setLsjlJlzt("1");
+				//审核不通过
 				}else if(StringUtils.equals(action,Const.XQStatus.DENY)){
 					xqLsjl.setLsjlJlzt("2");
 				}
+				//审核时 需求细化为改动内容
 				xqLsjl.setXqCznr(xqYw.getXqXqxh());
-			}else{
+			}else if(StringUtils.equals(action,Const.XQStatus.EDIT)){
 				xqLsjl.setLsjlJlzt("3");
+				//修改操作   需求描述为改动内容
 				xqLsjl.setXqCznr(xqYw.getXqXqms());
 			}
 		}
