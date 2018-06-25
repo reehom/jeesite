@@ -48,5 +48,5 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 	public void delete(XqYw xqYw) {
 		super.delete(xqYw);
 	}
-	
+
 }

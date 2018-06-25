@@ -6,6 +6,7 @@ package com.thinkgem.jeesite.modules.xq.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.thinkgem.jeesite.common.utils.IdGen;
 import com.thinkgem.jeesite.modules.xq.common.Const;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,7 @@ public class XqYwController extends BaseController {
 
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "save")
-	public String save(XqYw xqYw, Model model, RedirectAttributes redirectAttributes,@RequestParam(value="files",required = false) MultipartFile multipartFiles[]) {
+	public String save(XqYw xqYw, Model model, HttpServletRequest req, RedirectAttributes redirectAttributes,@RequestParam(value="files",required = false) MultipartFile multipartFiles[]) {
 		if (!beanValidator(model, xqYw)){
 			return form(xqYw, model);
 		}
