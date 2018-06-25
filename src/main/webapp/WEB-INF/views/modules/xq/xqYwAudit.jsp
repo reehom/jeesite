@@ -38,6 +38,7 @@
 		<li><a href="${ctx}/xq/xqYw/">需求列表</a></li>
 		<li class="active"><a href="${ctx}/xq/xqYw/form?id=${xqYw.id}">需求<shiro:hasPermission name="xq:xqYw:edit">${not empty xqYw.xqId?'审核':'添加'}</shiro:hasPermission><shiro:lacksPermission name="xq:xqYw:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
+	<div ></div>
 	<form:form id="inputForm" modelAttribute="xqYw"  action="#" method="post" class="form-horizontal" enctype="multipart/form-data">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
@@ -98,11 +99,11 @@
 
 	<script>
         function pass() {
-			document.getElementById("inputForm").action="${ctx}/xq/xqYw/save?action='access'";
+			document.getElementById("inputForm").action="${ctx}/xq/xqYw/save?action=access";
             $("#inputForm").submit();
         }
         function noPass(){
-            document.getElementById("inputForm").action="${ctx}/xq/xqYw/save?action='deny'";
+            document.getElementById("inputForm").action="${ctx}/xq/xqYw/save?action=deny";
             $("#inputForm").submit();
         }
 	</script>

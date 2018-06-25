@@ -6,7 +6,10 @@ package com.thinkgem.jeesite.modules.xq.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 import com.thinkgem.jeesite.modules.xq.common.Const;
+import com.thinkgem.jeesite.modules.xq.entity.XqLsjl;
+import com.thinkgem.jeesite.modules.xq.service.XqLsjlService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +29,7 @@ import com.thinkgem.jeesite.modules.xq.entity.XqYw;
 import com.thinkgem.jeesite.modules.xq.service.XqYwService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,6 +43,9 @@ public class XqYwController extends BaseController {
 
 	@Autowired
 	private XqYwService xqYwService;
+
+	@Autowired
+	private XqLsjlService xqLsjlService;
 	
 	@ModelAttribute
 	public XqYw get(@RequestParam(required=false) String id) {
@@ -55,7 +62,9 @@ public class XqYwController extends BaseController {
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(XqYw xqYw, HttpServletRequest request, HttpServletResponse response, Model model,@RequestParam(value = "status",required = false)String status) {
-		Page<XqYw> page = xqYwService.findPage(new Page<XqYw>(request, response), xqYw,status); 
+		Page<XqYw> page = xqYwService.findPage(new Page<XqYw>(request, response), xqYw,status);
+		String userType = UserUtils.getUser().getUserType();
+		model.addAttribute("userType",userType);
 		model.addAttribute("page", page);
 		return "modules/xq/xqYwList";
 	}
@@ -66,6 +75,8 @@ public class XqYwController extends BaseController {
 		model.addAttribute("systemLists",Const.SystemLists.systemLists);
 		model.addAttribute("resourcesLists",Const.XQResource.resourcesLists);
 		model.addAttribute("xqYw", xqYw);
+		List<XqLsjl> recordLists= xqLsjlService.findRecordList(xqYw.getXqId());
+		model.addAttribute("recordLists",recordLists);
 		return "modules/xq/xqYwForm";
 	}
 
@@ -83,15 +94,42 @@ public class XqYwController extends BaseController {
 		if (!beanValidator(model, xqYw)){
 			return form(xqYw, model);
 		}
-		System.out.println(action);
 		if(StringUtils.isNotBlank(action)){
 			if(StringUtils.equals(action,Const.XQStatus.ACCESS)){
 					xqYw.setDelFlag(Const.XQStatus.PASS);
+					xqYw.setXqShr(UserUtils.getUser().getName());
 			}else if(StringUtils.equals(action,Const.XQStatus.DENY)){
 				   xqYw.setDelFlag(Const.XQStatus.NO_PASS);
+					xqYw.setXqShr(UserUtils.getUser().getName());
+			}else if(StringUtils.equals(action,Const.XQStatus.EDIT)){
+					xqYw.setDelFlag(Const.XQStatus.TO_BE_AUDITED);
+			}
+
+		}
+
+
+		XqLsjl xqLsjl = new XqLsjl();
+
+		if(StringUtils.isBlank(xqYw.getXqId())){
+
+			xqLsjl.setXqCznr(xqYw.getXqXqms());
+			xqLsjl.setLsjlJlzt("0");
+		}else{
+			if(StringUtils.isNotBlank(action)){
+				if(StringUtils.equals(action,Const.XQStatus.ACCESS)){
+					xqLsjl.setLsjlJlzt("1");
+				}else if(StringUtils.equals(action,Const.XQStatus.DENY)){
+					xqLsjl.setLsjlJlzt("2");
+				}
+				xqLsjl.setXqCznr(xqYw.getXqXqxh());
+			}else{
+				xqLsjl.setLsjlJlzt("3");
+				xqLsjl.setXqCznr(xqYw.getXqXqms());
 			}
 		}
 		xqYwService.save(xqYw);
+		xqLsjl.setXqId(xqYw.getXqId());
+		xqLsjlService.save(xqLsjl);
 		addMessage(redirectAttributes, "保存需求成功");
 		return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
 	}

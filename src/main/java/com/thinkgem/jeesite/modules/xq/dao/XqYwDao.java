@@ -4,9 +4,11 @@
 package com.thinkgem.jeesite.modules.xq.dao;
 
 import com.thinkgem.jeesite.common.persistence.CrudDao;
+import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.persistence.annotation.MyBatisDao;
 import com.thinkgem.jeesite.modules.xq.entity.XqYw;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.access.method.P;
 
 import java.util.List;
 
@@ -19,5 +21,6 @@ import java.util.List;
 public interface XqYwDao extends CrudDao<XqYw> {
 
 
-    public List<XqYw> findList(@Param("XqYw") XqYw entity, @Param("status") String status);
+
+//    public List<XqYw> findListByStatus(@Param("XqYw") XqYw entity, @Param("status") String status, @Param("page")Page<XqYw> page);
 }

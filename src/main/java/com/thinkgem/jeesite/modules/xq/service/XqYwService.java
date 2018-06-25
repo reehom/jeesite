@@ -38,17 +38,20 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 	}
 	
 	public Page<XqYw> findPage(Page<XqYw> page, XqYw xqYw,String status) {
-		xqYw.setPage(page);
-		page.setList(xqYwDao.findList(xqYw,status));
-		return page;
-//		return super.findPage(page, xqYw);
-	}
+
+        if (StringUtils.isNotBlank(status)){
+            xqYw.setDelFlag(status);
+        }else{
+            xqYw.setDelFlag(null);
+        }
+		return super.findPage(page, xqYw);
+}
 	
 	@Transactional(readOnly = false)
 	public void save(XqYw xqYw) {
 		Date date = new Date();
 		if(StringUtils.isBlank(xqYw.getXqId())){
-			String XqId = "XQ"+DateTimeUtil.IdGenStr(date);
+			String XqId = "XQ"+DateTimeUtil.IdGenStr(date)+Math.round(Math.random()*100);
 			xqYw.setXqId(XqId);
 		}
 		super.save(xqYw);

@@ -46,7 +46,7 @@ public class XqLsjl extends DataEntity<XqLsjl> {
 		this.lsjlJlzt = lsjlJlzt;
 	}
 	
-	@Length(min=0, max=255, message="操作内容长度必须介于 0 和 255 之间")
+	@Length(min=0, max=2047, message="操作内容长度必须介于 0 和 2047 之间")
 	public String getXqCznr() {
 		return xqCznr;
 	}

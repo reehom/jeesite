@@ -31,32 +31,59 @@
 		WHERE a.xq_id = #{xqId}
 	</select>
 	
+	<!--<select id="findListByStatus" resultType="XqYw" parameterType="map">-->
+		<!--SELECT-->
+			<!--<include refid="xqYwColumns"/>-->
+		<!--FROM xq_yw a-->
+		<!--<include refid="xqYwJoins"/>-->
+		<!--<where>-->
+			<!--<if test="status != null and status != ''">-->
+			<!--a.del_flag = #{status}-->
+            <!--</if>-->
+			<!--<if test="XqYw.xqId != null and XqYw.xqId != ''">-->
+				<!--AND a.xq_id = #{XqYw.xqId}-->
+			<!--</if>-->
+			<!--<if test="XqYw.xqTitle != null and XqYw.xqTitle != ''">-->
+				<!--AND a.xq_title = #{XqYw.xqTitle}-->
+			<!--</if>-->
+		<!--</where>-->
+		<!--<choose>-->
+			<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
+				<!--ORDER BY ${page.orderBy}-->
+			<!--</when>-->
+			<!--<otherwise>-->
+				<!--ORDER BY a.update_date DESC-->
+			<!--</otherwise>-->
+		<!--</choose>-->
+	<!--</select>-->
+
+
 	<select id="findList" resultType="XqYw" parameterType="map">
-		SELECT 
-			<include refid="xqYwColumns"/>
+		SELECT
+		<include refid="xqYwColumns"/>
 		FROM xq_yw a
 		<include refid="xqYwJoins"/>
 		<where>
-			<if test="status != null and status != ''">
-			a.del_flag = #{status}
-            </if>
-			<if test="XqYw.xqId != null and XqYw.xqId != ''">
-				AND a.xq_id = #{XqYw.xqId}
+			<if test="delFlag != null and delFlag != ''">
+			a.del_flag = #{delFlag}
 			</if>
-			<if test="XqYw.xqTitle != null and XqYw.xqTitle != ''">
-				AND a.xq_title = #{XqYw.xqTitle}
+			<if test="xqId != null and xqId != ''">
+				AND a.xq_id = #{xqId}
+			</if>
+			<if test="xqTitle != null and xqTitle != ''">
+				AND a.xq_title = #{xqTitle}
 			</if>
 		</where>
 		<choose>
-			<when test="XqYw.page !=null and XqYw.page.orderBy != null and XqYw.page.orderBy != ''">
-				ORDER BY ${XqYw.page.orderBy}
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
 				ORDER BY a.update_date DESC
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<select id="findAllList" resultType="XqYw">
 		SELECT 
 			<include refid="xqYwColumns"/>

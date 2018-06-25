@@ -7,6 +7,8 @@ import com.thinkgem.jeesite.common.persistence.CrudDao;
 import com.thinkgem.jeesite.common.persistence.annotation.MyBatisDao;
 import com.thinkgem.jeesite.modules.xq.entity.XqLsjl;
 
+import java.util.List;
+
 /**
  * 需求业务表DAO接口
  * @author ThinkGem
@@ -14,5 +16,6 @@ import com.thinkgem.jeesite.modules.xq.entity.XqLsjl;
  */
 @MyBatisDao
 public interface XqLsjlDao extends CrudDao<XqLsjl> {
-	
+
+    List<XqLsjl> findRecordList(String xqId);
 }

@@ -15,7 +15,7 @@ public class Const {
     }
 
     public interface XQResource{
-        String XIANSHANG = "线上";
+        String XIANSHANG = "线上登记";
         String DIANHUA = "电话等级";
         String XIANCHANG = "现场工作";
         List<String> resourcesLists = Lists.newArrayList(XIANSHANG,DIANHUA,XIANCHANG);
@@ -28,7 +28,16 @@ public class Const {
         String NO_PASS = "3";        //审核没通过
         String CODING = "4";         //开发中
         String FINISH = "5";         //已完成
+
+
         String ACCESS = "access";   //通过
         String DENY = "deny" ;      //不通过
+        String EDIT = "edit";
+    }
+
+    public interface UserType{
+        String ADMIN = "1"; //系统管理员
+        String MANAGER = "2"; //部门经理
+        String ORDINARY_USER  = "3"; //普通用户
     }
 }

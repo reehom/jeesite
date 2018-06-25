@@ -88,11 +88,20 @@
 					${xqYw.xqXqly}
 			</td>
 			<td>
-					${xqYw.delFlag}
+					<c:if test="${xqYw.delFlag=='0'}">待审核</c:if>
+					<c:if test="${xqYw.delFlag=='1'}">删除</c:if>
+					<c:if test="${xqYw.delFlag=='2'}">审核通过</c:if>
+					<c:if test="${xqYw.delFlag=='3'}">审核不通过</c:if>
+					<c:if test="${xqYw.delFlag=='4'}">开发中</c:if>
+					<c:if test="${xqYw.delFlag=='5'}">已完成</c:if>
 			</td>
 			<shiro:hasPermission name="xq:xqYw:edit"><td>
 				<a href="${ctx}/xq/xqYw/form?id=${xqYw.xqId}">修改</a>
-				<a href="${ctx}/xq/xqYw/audit?id=${xqYw.xqId}">审核</a>
+				<c:if test="${xqYw.delFlag=='0'}">
+					<c:if test="${userType=='1'}">
+						<a href="${ctx}/xq/xqYw/audit?id=${xqYw.xqId}">审核</a>
+					</c:if>
+				</c:if>
 				<a href="${ctx}/xq/xqYw/delete?id=${xqYw.xqId}" onclick="return confirmx('确认要删除该需求吗？', this.href)">删除</a>
 			</td></shiro:hasPermission>
 		</tr>
