@@ -14,5 +14,7 @@ import com.thinkgem.jeesite.modules.xq.entity.XqFjcl;
  */
 @MyBatisDao
 public interface XqFjclDao extends CrudDao<XqFjcl> {
+
+    void saveData(XqFjcl xqFjcl);
 	
 }

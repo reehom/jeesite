@@ -5,6 +5,7 @@ package com.thinkgem.jeesite.modules.xq.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,9 @@ import com.thinkgem.jeesite.modules.xq.dao.XqFjclDao;
 @Transactional(readOnly = true)
 public class XqFjclService extends CrudService<XqFjclDao, XqFjcl> {
 
+	@Autowired
+	private  XqFjclDao xqFjclDao;
+
 	public XqFjcl get(String id) {
 		return super.get(id);
 	}
@@ -37,6 +41,13 @@ public class XqFjclService extends CrudService<XqFjclDao, XqFjcl> {
 	@Transactional(readOnly = false)
 	public void save(XqFjcl xqFjcl) {
 		super.save(xqFjcl);
+	}
+
+	@Transactional(readOnly = false)
+	public void saveData(XqFjcl xqFjcl) {
+
+		xqFjclDao.saveData(xqFjcl);
+
 	}
 	
 	@Transactional(readOnly = false)

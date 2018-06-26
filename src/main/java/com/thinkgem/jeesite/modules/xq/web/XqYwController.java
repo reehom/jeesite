@@ -6,6 +6,8 @@ package com.thinkgem.jeesite.modules.xq.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.thinkgem.jeesite.common.utils.IdGen;
+import com.thinkgem.jeesite.common.web.Servlets;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 import com.thinkgem.jeesite.modules.xq.common.Const;
 import com.thinkgem.jeesite.modules.xq.entity.XqLsjl;
@@ -28,6 +30,7 @@ import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.modules.xq.entity.XqYw;
 import com.thinkgem.jeesite.modules.xq.service.XqYwService;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +93,33 @@ public class XqYwController extends BaseController {
 
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "save")
-	public String save(XqYw xqYw, Model  model, RedirectAttributes redirectAttributes,@RequestParam(value="files",required = false) MultipartFile multipartFiles[],@RequestParam(value="action",required = false)String action) {
+	public String save(XqYw xqYw, Model  model, HttpServletRequest request, RedirectAttributes redirectAttributes,@RequestParam(value="files",required = false) MultipartFile multipartFiles[],@RequestParam(value="action",required = false)String action) {
+		model.addAttribute("systemLists",Const.SystemLists.systemLists);
+		model.addAttribute("resourcesLists",Const.XQResource.resourcesLists);
+
+		//转型为MultipartHttpRequest
+		MultipartHttpServletRequest multipartRequest  =  (MultipartHttpServletRequest) request;
+		//获得文件
+		MultipartFile pdfFile  =  multipartRequest.getFile("files");
+		if(pdfFile.getOriginalFilename() ==null || "".equals(pdfFile.getOriginalFilename())){
+			model.addAttribute("message","上传文件不存在");
+			return "modules/xq/xqYwAdd";
+		}
+
+		String imgName = pdfFile.getOriginalFilename();
+		String suffix = imgName.substring(imgName.lastIndexOf(".")+1,imgName.length());
+		if(!"pdf".equals(suffix)){
+			model.addAttribute("message","上传格式不正确,仅限pdf文件");
+			return "modules/xq/xqYwAdd";
+		}
+
+		if(pdfFile.getSize() > 5242880){
+			model.addAttribute("message","上传文件不可大于5m");
+			return "modules/xq/xqYwAdd";
+		}
+
+
+
 		if (!beanValidator(model, xqYw)){
 			return form(xqYw, model);
 		}
@@ -141,6 +170,10 @@ public class XqYwController extends BaseController {
 		xqLsjl.setXqId(xqYw.getXqId());
 		xqLsjlService.save(xqLsjl);
 		addMessage(redirectAttributes, "保存需求成功");
+
+		String msg = xqYwService.saveFjcl(xqYw.getXqId(), pdfFile, suffix);
+		model.addAttribute("message",msg);
+
 		return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
 	}
 	

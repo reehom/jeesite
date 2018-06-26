@@ -3,10 +3,16 @@
  */
 package com.thinkgem.jeesite.modules.xq.service;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
+import com.thinkgem.jeesite.common.config.Global;
+import com.thinkgem.jeesite.common.utils.IdGen;
 import com.thinkgem.jeesite.common.utils.StringUtils;
+import com.thinkgem.jeesite.common.web.Servlets;
+import com.thinkgem.jeesite.modules.xq.common.Const;
+import com.thinkgem.jeesite.modules.xq.entity.XqFjcl;
 import com.thinkgem.jeesite.modules.xq.utils.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +22,7 @@ import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.service.CrudService;
 import com.thinkgem.jeesite.modules.xq.entity.XqYw;
 import com.thinkgem.jeesite.modules.xq.dao.XqYwDao;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 需求业务表Service
@@ -60,6 +67,46 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 	@Transactional(readOnly = false)
 	public void delete(XqYw xqYw) {
 		super.delete(xqYw);
+	}
+
+	public String saveFjcl(String xqId, MultipartFile pdfFile, String suffix){
+		String name = IdGen.uuid();
+		//客户端访问路径
+		String filePath = Servlets.getRequest().getContextPath() +
+				Global.USERFILES_BASE_URL + "docFile" + "/" + name +"." + suffix;
+		//本地保存路径
+		String fileLocalPath = Global.getUserfilesBaseDir() + Global.USERFILES_BASE_URL + "docFile" + "/" + name +"."+suffix;
+		//创建目录
+		File saveDirFile = new File(fileLocalPath);
+		if (!saveDirFile.exists()) {
+			saveDirFile.mkdirs();
+		}
+		try {
+			pdfFile.transferTo(saveDirFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "上传失败！！！";
+		}
+
+		System.out.println(pdfFile.getOriginalFilename());
+		System.out.println(pdfFile.getSize());
+		System.out.println(pdfFile.getContentType());
+		System.out.println(fileLocalPath);
+		System.out.println(filePath);
+		System.out.println(xqId);
+
+		XqFjclService service = new XqFjclService();
+		XqFjcl fjcl = new XqFjcl();
+		fjcl.setFjclId("22");
+		fjcl.setXqId(xqId);
+		fjcl.setFjclSize(String.valueOf(pdfFile.getSize()));
+		fjcl.setFjclName(pdfFile.getOriginalFilename());
+		fjcl.setDelFlag("0");
+		fjcl.setFjclCode("0");
+
+		service.saveData(fjcl);
+
+		return Const.SUCCESS;
 	}
 
 }

@@ -82,6 +82,28 @@
 			#{delFlag}
 		)
 	</insert>
+
+	<insert id="saveData">
+		INSERT INTO xq_fjcl(
+			fjcl_id,
+			xq_id,
+			fjcl_code,
+			fjcl_name,
+			fjcl_ext,
+			fjcl_url,
+			fjcl_size,
+			del_flag
+		) VALUES (
+			#{fjclId},
+			#{xqId},
+			#{fjclCode},
+			#{fjclName},
+			#{fjclExt},
+			#{fjclUrl},
+			#{fjclSize},
+			#{delFlag}
+		)
+	</insert>
 	
 	<update id="update">
 		UPDATE xq_fjcl SET 	

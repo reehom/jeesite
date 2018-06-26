@@ -40,4 +40,6 @@ public class Const {
         String MANAGER = "2"; //部门经理
         String ORDINARY_USER  = "3"; //普通用户
     }
+
+    public static final String SUCCESS = "success";
 }
