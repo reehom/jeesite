@@ -37,7 +37,8 @@
 		<li><label>需求名称：</label>
 			<form:input id="xqTitle" path="xqTitle" htmlEscape="false" maxlength="64" class="input-medium"/>
 		</li>
-		<li><label>提出时间：</label>
+		<li>
+			<label>提出时间：</label>
 			<input id="createDate"  name="createDate"  type="text" readonly="readonly" maxlength="20" class="input-medium Wdate" style="width:163px;"
 				   value="<fmt:formatDate value="${xqYw.createDate}" pattern="yyyy-MM-dd"/>"
 				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>

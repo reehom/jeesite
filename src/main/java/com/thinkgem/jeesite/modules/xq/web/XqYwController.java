@@ -46,7 +46,7 @@ public class XqYwController extends BaseController {
 
 	@Autowired
 	private XqLsjlService xqLsjlService;
-	
+
 	@ModelAttribute
 	public XqYw get(@RequestParam(required=false) String id) {
 		XqYw entity = null;

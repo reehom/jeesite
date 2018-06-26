@@ -72,7 +72,7 @@
 	<div class="control-group">
 		<label class="control-label">附件材料：</label>
 		<div class="controls">
-			<input type="file" name="files" htmlEscape="false" maxlength="100" class="input-xxlarge" id="uploadFile"/>
+			<input type="file" name="files"  htmlEscape="false" maxlength="100" class="input-xxlarge" id="uploadFile"/>
 			<a href="javascript:void(0);" onclick="deleteFile();">清空</a>
 		</div>
 	</div>
