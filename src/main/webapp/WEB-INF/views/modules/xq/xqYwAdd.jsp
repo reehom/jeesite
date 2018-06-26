@@ -31,10 +31,10 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-	<li><a href="${ctx}/xq/xqYw/">需求列表</a></li>
+	<li><a href="${ctx}/xq/xqYw/list?only=true">需求列表</a></li>
 	<li class="active"><a href="${ctx}/xq/xqYw/add">需求<shiro:hasPermission name="xq:xqYw:edit">${not empty xqYw.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="xq:xqYw:edit">查看</shiro:lacksPermission></a></li>
 </ul><br/>
-<form:form id="inputForm" modelAttribute="xqYw" action="${ctx}/xq/xqYw/save" method="post" class="form-horizontal" enctype="multipart/form-data">
+<form:form id="inputForm" modelAttribute="xqYw" action="${ctx}/xq/xqYw/save?action=add" method="post" class="form-horizontal" enctype="multipart/form-data">
 	<form:hidden path="id"/>
 	<sys:message content="${message}"/>
 	<div class="control-group">

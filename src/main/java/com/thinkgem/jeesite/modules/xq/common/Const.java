@@ -29,15 +29,25 @@ public class Const {
         String CODING = "4";         //开发中
         String FINISH = "5";         //已完成
 
+    }
 
+    public interface SaveAction{
         String ACCESS = "access";   //通过
         String DENY = "deny" ;      //不通过
-        String EDIT = "edit";
+        String EDIT = "edit";       //修改
+        String ADD = "add";         //添加
     }
 
     public interface UserType{
         String ADMIN = "1"; //系统管理员
         String MANAGER = "2"; //部门经理
         String ORDINARY_USER  = "3"; //普通用户
+    }
+
+    public interface LsjlZt{
+        String ADD = "0";
+        String PASS= "1";
+        String NO_PASS = "2";
+        String EDIT = "3";
     }
 }

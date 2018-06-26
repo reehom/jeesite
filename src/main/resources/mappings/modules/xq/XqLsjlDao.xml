@@ -12,10 +12,13 @@
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
 		a.remarks AS "remarks",
-		a.del_flag AS "delFlag"
+		a.del_flag AS "delFlag",
+		u.name AS "createBy.name"
+
 	</sql>
 	
 	<sql id="xqLsjlJoins">
+		LEFT JOIN sys_user u ON u.id = a.create_by
 	</sql>
     
 	<select id="get" resultType="XqLsjl">
@@ -115,7 +118,7 @@
 		FROM xq_lsjl a
 		<include refid="xqLsjlJoins"/>
 		where xq_id = #{xqId}
-		ORDER BY create_date DESC
+		ORDER BY a.create_date DESC
 	</select>
 
 </mapper>
