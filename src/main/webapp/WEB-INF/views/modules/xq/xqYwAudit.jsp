@@ -35,7 +35,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/xq/xqYw/">需求列表</a></li>
+		<li><a href="${ctx}/xq/xqYw/list?only=true">需求列表</a></li>
 		<li class="active"><a href="${ctx}/xq/xqYw/form?id=${xqYw.id}">需求<shiro:hasPermission name="xq:xqYw:edit">${not empty xqYw.xqId?'审核':'添加'}</shiro:hasPermission><shiro:lacksPermission name="xq:xqYw:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<div ></div>

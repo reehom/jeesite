@@ -37,7 +37,7 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li><a href="${ctx}/xq/xqYw/">需求列表</a></li>
+    <li><a href="${ctx}/xq/xqYw/list?only=true">需求列表</a></li>
     <li class="active"><a href="${ctx}/xq/xqYw/form?id=${xqYw.id}">需求<shiro:hasPermission
             name="xq:xqYw:edit">${not empty xqYw.xqId?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
             name="xq:xqYw:edit">查看</shiro:lacksPermission></a></li>
@@ -126,11 +126,10 @@
                 <c:forEach items="${recordLists}" var="record">
                     <tr>
                         <td style="width: 1px;"></td>
-                        <td style="width: 50px;">
+                        <td style="width: 30px;">
                             <fmt:formatDate value="${record.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
                         </td>
                         <td style="width: 30px;">
-                            ${record.createBy}
                             ${record.createBy.name}
                         </td>
                         <td style="width: 30px;">

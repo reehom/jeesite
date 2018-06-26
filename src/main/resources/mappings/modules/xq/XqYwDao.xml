@@ -73,6 +73,9 @@
 			<if test="xqTitle != null and xqTitle != ''">
 				AND a.xq_title = #{xqTitle}
 			</if>
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_by = #{createBy.id}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

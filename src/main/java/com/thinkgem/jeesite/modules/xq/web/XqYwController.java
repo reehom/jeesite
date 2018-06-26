@@ -61,12 +61,20 @@ public class XqYwController extends BaseController {
 		}
 		return entity;
 	}
-	
+
+	/*
+	 *@Param  status  传进不同status  查看处于不同状态的需求   不传时返回所有状态需求
+	 *
+	 *@Param  only  only存在并为true时  返回本人的数据， 为空或false 时 返回所有用户的数据
+	 */
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(XqYw xqYw, HttpServletRequest request, HttpServletResponse response, Model model,@RequestParam(value = "status",required = false)String status) {
-		Page<XqYw> page = xqYwService.findPage(new Page<XqYw>(request, response), xqYw,status);
+	public String list(XqYw xqYw, HttpServletRequest request, HttpServletResponse response, Model model,@RequestParam(value = "status",required = false)String status,@RequestParam(value = "only",required = false)Boolean only) {
 		String userType = UserUtils.getUser().getUserType();
+		if(only != null && only == true){
+			xqYw.setCreateBy(UserUtils.getUser());
+		}
+		Page<XqYw> page = xqYwService.findPage(new Page<XqYw>(request, response), xqYw,status);
 		model.addAttribute("userType",userType);
 		model.addAttribute("page", page);
 		return "modules/xq/xqYwList";
@@ -124,13 +132,13 @@ public class XqYwController extends BaseController {
 			return form(xqYw, model);
 		}
 		if(StringUtils.isNotBlank(action)){
-			if(StringUtils.equals(action,Const.XQStatus.ACCESS)){
+			if(StringUtils.equals(action,Const.SaveAction.ACCESS)){
 					xqYw.setDelFlag(Const.XQStatus.PASS);
 					xqYw.setXqShr(UserUtils.getUser().getName());
-			}else if(StringUtils.equals(action,Const.XQStatus.DENY)){
+			}else if(StringUtils.equals(action,Const.SaveAction.DENY)){
 				   xqYw.setDelFlag(Const.XQStatus.NO_PASS);
 					xqYw.setXqShr(UserUtils.getUser().getName());
-			}else if(StringUtils.equals(action,Const.XQStatus.EDIT)){
+			}else if(StringUtils.equals(action,Const.SaveAction.EDIT)){
 					xqYw.setDelFlag(Const.XQStatus.TO_BE_AUDITED);
 			}
 
@@ -148,22 +156,23 @@ public class XqYwController extends BaseController {
 		if(StringUtils.isBlank(xqYw.getXqId())){
 
 			xqLsjl.setXqCznr(xqYw.getXqXqms());
-			xqLsjl.setLsjlJlzt("0");
+			xqLsjl.setLsjlJlzt(Const.LsjlZt.ADD);
 		}else{
 			if(StringUtils.isNotBlank(action)){
-				//审核通过
-				if(StringUtils.equals(action,Const.XQStatus.ACCESS)){
-					xqLsjl.setLsjlJlzt("1");
+				//审核通过  需求细化为改动内容
+				if(StringUtils.equals(action,Const.SaveAction.ACCESS)){
+					xqLsjl.setLsjlJlzt(Const.LsjlZt.PASS);
+					xqLsjl.setXqCznr(xqYw.getXqXqxh());
 				//审核不通过
-				}else if(StringUtils.equals(action,Const.XQStatus.DENY)){
-					xqLsjl.setLsjlJlzt("2");
+				}else if(StringUtils.equals(action,Const.SaveAction.DENY)){
+					xqLsjl.setLsjlJlzt(Const.LsjlZt.NO_PASS);
+					xqLsjl.setXqCznr(xqYw.getXqXqxh());
+				}else if(StringUtils.equals(action,Const.SaveAction.EDIT)){
+					xqLsjl.setLsjlJlzt(Const.LsjlZt.EDIT);
+					//修改操作   需求描述为改动内容
+					xqLsjl.setXqCznr(xqYw.getXqXqms());
 				}
-				//审核时 需求细化为改动内容
-				xqLsjl.setXqCznr(xqYw.getXqXqxh());
-			}else if(StringUtils.equals(action,Const.XQStatus.EDIT)){
-				xqLsjl.setLsjlJlzt("3");
-				//修改操作   需求描述为改动内容
-				xqLsjl.setXqCznr(xqYw.getXqXqms());
+
 			}
 		}
 		xqYwService.save(xqYw);
@@ -173,8 +182,7 @@ public class XqYwController extends BaseController {
 
 		String msg = xqYwService.saveFjcl(xqYw.getXqId(), pdfFile, suffix);
 		model.addAttribute("message",msg);
-
-		return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
+        return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?only=true&repage";
 	}
 	
 	@RequiresPermissions("xq:xqYw:edit")
@@ -189,7 +197,6 @@ public class XqYwController extends BaseController {
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = "audit")
 	public String audit(XqYw xqYw,Model model) {
-		model.addAttribute("xqYw", xqYw);
 		model.addAttribute("xqYw", xqYw);
 		return "modules/xq/xqYwAudit";
 	}
