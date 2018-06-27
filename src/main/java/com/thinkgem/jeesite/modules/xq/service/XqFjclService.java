@@ -29,15 +29,15 @@ public class XqFjclService extends CrudService<XqFjclDao, XqFjcl> {
 	public XqFjcl get(String id) {
 		return super.get(id);
 	}
-	
+
 	public List<XqFjcl> findList(XqFjcl xqFjcl) {
 		return super.findList(xqFjcl);
 	}
-	
+
 	public Page<XqFjcl> findPage(Page<XqFjcl> page, XqFjcl xqFjcl) {
 		return super.findPage(page, xqFjcl);
 	}
-	
+
 	@Transactional(readOnly = false)
 	public void save(XqFjcl xqFjcl) {
 		super.save(xqFjcl);
@@ -45,14 +45,17 @@ public class XqFjclService extends CrudService<XqFjclDao, XqFjcl> {
 
 	@Transactional(readOnly = false)
 	public void saveData(XqFjcl xqFjcl) {
-
 		xqFjclDao.saveData(xqFjcl);
 
+	}
+	@Transactional(readOnly = false)
+	public List<XqFjcl> findFjclbyXqywId(String ywId) {
+		return  xqFjclDao.findFjclbyXqywId(ywId);
 	}
 	
 	@Transactional(readOnly = false)
 	public void delete(XqFjcl xqFjcl) {
 		super.delete(xqFjcl);
 	}
-	
+
 }

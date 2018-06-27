@@ -102,6 +102,19 @@
                                     readonly="true"/>
                     </div>
                 </div>
+
+                <div class="control-group">
+                    <label class="control-label">附件材料：</label>
+                    <div class="controls">
+                        <c:if test="${empty fjcl}">无</c:if>
+                        <c:if test="${not empty fjcl}">
+                                <c:forEach items="${fjcl}" var="fjcl">
+                                    <div style="height: 25px">${fjcl.fjclName}&nbsp;&nbsp;&nbsp;<a href="${ctx}/xq/xqYw/fileDown?id=${fjcl.fjclId}">下载</a></div>
+                                </c:forEach>
+                        </c:if>
+                    </div>
+                </div>
+
                 <%--<div class="control-group">--%>
                 <%--<label class="control-label">remarks：</label>--%>
                 <%--<div class="controls">--%>

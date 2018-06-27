@@ -36,6 +36,9 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 	@Autowired
 	private XqYwDao xqYwDao;
 
+	@Autowired
+	private XqFjclService service;
+
 	public XqYw get(String id) {
 		return super.get(id);
 	}
@@ -69,7 +72,10 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 		super.delete(xqYw);
 	}
 
+	@Transactional(readOnly = false)
 	public String saveFjcl(String xqId, MultipartFile pdfFile, String suffix){
+		Date date = new Date();
+
 		String name = IdGen.uuid();
 		//客户端访问路径
 		String filePath = Servlets.getRequest().getContextPath() +
@@ -88,22 +94,14 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 			return "上传失败！！！";
 		}
 
-		System.out.println(pdfFile.getOriginalFilename());
-		System.out.println(pdfFile.getSize());
-		System.out.println(pdfFile.getContentType());
-		System.out.println(fileLocalPath);
-		System.out.println(filePath);
-		System.out.println(xqId);
-
-		XqFjclService service = new XqFjclService();
 		XqFjcl fjcl = new XqFjcl();
-		fjcl.setFjclId("22");
+		fjcl.setFjclId("WJ"+DateTimeUtil.IdGenStr(date)+Math.round(Math.random()*100));
 		fjcl.setXqId(xqId);
+		fjcl.setFjclCode(xqId);
+		fjcl.setFjclUrl(filePath);
 		fjcl.setFjclSize(String.valueOf(pdfFile.getSize()));
 		fjcl.setFjclName(pdfFile.getOriginalFilename());
 		fjcl.setDelFlag("0");
-		fjcl.setFjclCode("0");
-
 		service.saveData(fjcl);
 
 		return Const.SUCCESS;

@@ -23,10 +23,22 @@
                 }
             });
 
+            $("#addFiles").click(function () {
+                var html = "<div class=\"control-group\">\n" +
+                    "<label class=\"control-label\"></label>\n" +
+                    "<div class=\"controls\">\n" +
+                    "<input type=\"file\" name=\"files\"  htmlEscape=\"false\" maxlength=\"100\" class=\"upload input-xxlarge\" id=\"uploadFile\"/>\n" +
+                    "</div>\n" +
+                    "</div>";
+
+                $("#div").after(html);
+            });
+
+            $("#resetFiles").click(function () {
+                $(".upload").val("");
+            });
         });
-        function deleteFile() {
-            $("#uploadFile").val("");
-        }
+
 	</script>
 </head>
 <body>
@@ -41,26 +53,22 @@
 		<label class="control-label">需求名称：</label>
 		<div class="controls">
 			<form:input path="xqTitle" htmlEscape="false" maxlength="255" class="input-xlarge required"/>
-			<span class="help-inline"><font color="red">*</font> </span>
+			<span class="help-inline" style="color: red">*</span>
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label">所属系统：</label>
 		<div class="controls">
-			<form:select path="xqSsxt" htmlEscape="false"
-						 maxlength="64" class="input-xlarge required" items="${systemLists}" style = "width:285px;"
-			/>
-			<span class="help-inline"><font color="red">*</font> </span>
+			<form:select path="xqSsxt" htmlEscape="false" maxlength="64" class="input-xlarge required" items="${systemLists}" style = "width:285px;"/>
+			<span class="help-inline" style="color: red">*</span>
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label">需求来源：</label>
 		<div class="controls">
             <form:select path="xqXqly" htmlEscape="false"
-                         maxlength="64" class="input-xlarge required" items="${resourcesLists}" style = "width:285px;"
-            />
-
-			<span class="help-inline"><font color="red">*</font> </span>
+                         maxlength="64" class="input-xlarge required" items="${resourcesLists}" style = "width:285px;"/>
+			<span class="help-inline" style="color: red">*</span>
 		</div>
 	</div>
 	<div class="control-group">
@@ -69,11 +77,17 @@
 			<form:textarea path="xqXqms" htmlEscape="false" rows="4" maxlength="255" class="input-xxlarge "/>
 		</div>
 	</div>
-	<div class="control-group">
+	<div class="control-group" id="div">
 		<label class="control-label">附件材料：</label>
 		<div class="controls">
-			<input type="file" name="files"  htmlEscape="false" maxlength="100" class="input-xxlarge" id="uploadFile"/>
-			<a href="javascript:void(0);" onclick="deleteFile();">清空</a>
+			<button id="addFiles" type="button"  class="btn btn-white">添加</button>&nbsp;&nbsp;&nbsp;&nbsp;
+			<button id="resetFiles" type="button"  class="btn btn-white">全部清空</button>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label"></label>
+		<div class="controls">
+			<input type="file" name="files"  htmlEscape="false" maxlength="100" class="upload input-xxlarge" id="uploadFile"/>
 		</div>
 	</div>
 	<div class="form-actions">

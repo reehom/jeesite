@@ -7,6 +7,8 @@ import com.thinkgem.jeesite.common.persistence.CrudDao;
 import com.thinkgem.jeesite.common.persistence.annotation.MyBatisDao;
 import com.thinkgem.jeesite.modules.xq.entity.XqFjcl;
 
+import java.util.List;
+
 /**
  * 附件材料表DAO接口
  * @author ThinkGem
@@ -16,5 +18,7 @@ import com.thinkgem.jeesite.modules.xq.entity.XqFjcl;
 public interface XqFjclDao extends CrudDao<XqFjcl> {
 
     void saveData(XqFjcl xqFjcl);
-	
+
+    List<XqFjcl> findFjclbyXqywId(String xqId);
+
 }

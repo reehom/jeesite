@@ -10,7 +10,9 @@ import com.thinkgem.jeesite.common.utils.IdGen;
 import com.thinkgem.jeesite.common.web.Servlets;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 import com.thinkgem.jeesite.modules.xq.common.Const;
+import com.thinkgem.jeesite.modules.xq.entity.XqFjcl;
 import com.thinkgem.jeesite.modules.xq.entity.XqLsjl;
+import com.thinkgem.jeesite.modules.xq.service.XqFjclService;
 import com.thinkgem.jeesite.modules.xq.service.XqLsjlService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,8 @@ import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.modules.xq.entity.XqYw;
 import com.thinkgem.jeesite.modules.xq.service.XqYwService;
 
-import java.io.File;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +52,9 @@ public class XqYwController extends BaseController {
 
 	@Autowired
 	private XqLsjlService xqLsjlService;
+
+	@Autowired
+	private XqFjclService xqFjclService;
 
 	@ModelAttribute
 	public XqYw get(@RequestParam(required=false) String id) {
@@ -88,6 +94,8 @@ public class XqYwController extends BaseController {
 		model.addAttribute("xqYw", xqYw);
 		List<XqLsjl> recordLists= xqLsjlService.findRecordList(xqYw.getXqId());
 		model.addAttribute("recordLists",recordLists);
+		List<XqFjcl> fjcl= xqFjclService.findFjclbyXqywId(xqYw.getXqId());
+        model.addAttribute("fjcl", fjcl);
 		return "modules/xq/xqYwForm";
 	}
 
@@ -101,14 +109,50 @@ public class XqYwController extends BaseController {
 
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "save")
-	public String save(XqYw xqYw, Model  model, HttpServletRequest request, RedirectAttributes redirectAttributes,@RequestParam(value="files",required = false) MultipartFile multipartFiles[],@RequestParam(value="action",required = false)String action) {
+	public String save(XqYw xqYw, Model  model, HttpServletRequest request, RedirectAttributes redirectAttributes,
+					   @RequestParam(value="files",required = false) MultipartFile multipartFiles[],@RequestParam(value="action",required = false)String action) {
 		model.addAttribute("systemLists",Const.SystemLists.systemLists);
 		model.addAttribute("resourcesLists",Const.XQResource.resourcesLists);
 
-		//转型为MultipartHttpRequest
-		MultipartHttpServletRequest multipartRequest  =  (MultipartHttpServletRequest) request;
-		//获得文件
-		MultipartFile pdfFile  =  multipartRequest.getFile("files");
+		Boolean flag = true;
+
+		Integer fileLen = multipartFiles.length;
+
+		//判断上传文件个数是否大于0
+		if(fileLen > 0){
+			for(MultipartFile mul : multipartFiles){
+				if(mul.getOriginalFilename() !=null && !"".equals(mul.getOriginalFilename())){
+					String imgName = mul.getOriginalFilename();
+					String suffix = imgName.substring(imgName.lastIndexOf(".")+1,imgName.length());
+					/*if(!"pdf".equals(suffix)){
+						model.addAttribute("message","上传格式不正确,仅限pdf文件");
+						return "modules/xq/xqYwAdd";
+					}*/
+					if(mul.getSize() > 5242880){
+						model.addAttribute("message","上传文件不可大于5m");
+						return "modules/xq/xqYwAdd";
+					}
+				}
+			}
+		}
+
+		if(!Const.SUCCESS.equals(saveYw(xqYw, model, action))){
+			flag = false;
+		}
+
+		if(fileLen > 0){
+			for(MultipartFile mul : multipartFiles) {
+				if(mul.getOriginalFilename() !=null && !"".equals(mul.getOriginalFilename())){
+					String imgName = mul.getOriginalFilename();
+					String suffix = imgName.substring(imgName.lastIndexOf(".")+1,imgName.length());
+					xqYwService.saveFjcl(xqYw.getXqId(), mul, suffix);
+				}
+			}
+		}
+		/*if(!Const.SUCCESS.equals(saveYw(xqYw, model, action))){
+			flag = false;
+		}
+
 		if(pdfFile.getOriginalFilename() ==null || "".equals(pdfFile.getOriginalFilename())){
 			model.addAttribute("message","上传文件不存在");
 			return "modules/xq/xqYwAdd";
@@ -124,33 +168,41 @@ public class XqYwController extends BaseController {
 		if(pdfFile.getSize() > 5242880){
 			model.addAttribute("message","上传文件不可大于5m");
 			return "modules/xq/xqYwAdd";
+		}*/
+
+		if(flag){
+			addMessage(redirectAttributes, "保存需求成功");
+		}else{
+			addMessage(redirectAttributes, "保存需求失败");
 		}
 
+        return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?only=true&repage";
+	}
 
-
+	public String saveYw(XqYw xqYw, Model  model, @RequestParam(value="action",required = false)String action){
 		if (!beanValidator(model, xqYw)){
 			return form(xqYw, model);
 		}
 		if(StringUtils.isNotBlank(action)){
 			if(StringUtils.equals(action,Const.SaveAction.ACCESS)){
-					xqYw.setDelFlag(Const.XQStatus.PASS);
-					xqYw.setXqShr(UserUtils.getUser().getName());
+				xqYw.setDelFlag(Const.XQStatus.PASS);
+				xqYw.setXqShr(UserUtils.getUser().getName());
 			}else if(StringUtils.equals(action,Const.SaveAction.DENY)){
-				   xqYw.setDelFlag(Const.XQStatus.NO_PASS);
-					xqYw.setXqShr(UserUtils.getUser().getName());
+				xqYw.setDelFlag(Const.XQStatus.NO_PASS);
+				xqYw.setXqShr(UserUtils.getUser().getName());
 			}else if(StringUtils.equals(action,Const.SaveAction.EDIT)){
-					xqYw.setDelFlag(Const.XQStatus.TO_BE_AUDITED);
+				xqYw.setDelFlag(Const.XQStatus.TO_BE_AUDITED);
 			}
 
 		}
 
 		/*
-		* 生成操作历史记录
-		* xqYw  id 为空时为建立操作
-		*  action = acess  为审核通过
-		*  action = deny 为 审核不通过
-		*  action = edit 为修改操作
-		* */
+		 * 生成操作历史记录
+		 * xqYw  id 为空时为建立操作
+		 *  action = acess  为审核通过
+		 *  action = deny 为 审核不通过
+		 *  action = edit 为修改操作
+		 * */
 		XqLsjl xqLsjl = new XqLsjl();
 
 		if(StringUtils.isBlank(xqYw.getXqId())){
@@ -163,7 +215,7 @@ public class XqYwController extends BaseController {
 				if(StringUtils.equals(action,Const.SaveAction.ACCESS)){
 					xqLsjl.setLsjlJlzt(Const.LsjlZt.PASS);
 					xqLsjl.setXqCznr(xqYw.getXqXqxh());
-				//审核不通过
+					//审核不通过
 				}else if(StringUtils.equals(action,Const.SaveAction.DENY)){
 					xqLsjl.setLsjlJlzt(Const.LsjlZt.NO_PASS);
 					xqLsjl.setXqCznr(xqYw.getXqXqxh());
@@ -178,13 +230,9 @@ public class XqYwController extends BaseController {
 		xqYwService.save(xqYw);
 		xqLsjl.setXqId(xqYw.getXqId());
 		xqLsjlService.save(xqLsjl);
-		addMessage(redirectAttributes, "保存需求成功");
-
-		String msg = xqYwService.saveFjcl(xqYw.getXqId(), pdfFile, suffix);
-		model.addAttribute("message",msg);
-        return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?only=true&repage";
+		return Const.SUCCESS;
 	}
-	
+
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "delete")
 	public String delete(XqYw xqYw, RedirectAttributes redirectAttributes) {
@@ -200,5 +248,45 @@ public class XqYwController extends BaseController {
 		model.addAttribute("xqYw", xqYw);
 		return "modules/xq/xqYwAudit";
 	}
+
+
+	@RequiresPermissions("xq:xqYw:view")
+	@RequestMapping(value = "fileDown")
+	public void fileDown(@RequestParam(required=false) String id, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	    //得到要下载的文件名
+        XqFjcl fjcl = xqFjclService.get(id);
+
+        String fileName = fjcl.getFjclName();
+        String fileUrl = fjcl.getFjclUrl();
+        String fileLocalPath = Global.getUserfilesBaseDir() + fileUrl;
+
+        //得到要下载的文件
+        File file = new File(fileLocalPath);
+        //如果文件不存在
+        if(!file.exists()){
+            request.setAttribute("message", "您要下载的资源不存在！！");
+            return;
+        }
+        //处理文件名
+        String realname = fileName.substring(fileName.indexOf("_")+1);
+        //设置响应头，控制浏览器下载该文件
+        response.setHeader("content-disposition", "attachment;filename=" + URLEncoder.encode(realname, "UTF-8"));
+        //读取要下载的文件，保存到文件输入流
+        FileInputStream in = new FileInputStream(fileLocalPath);
+        //创建输出流
+        OutputStream out = response.getOutputStream();
+        //创建缓冲区
+        byte buffer[] = new byte[1024];
+        int len = 0;
+        //循环将输入流中的内容读取到缓冲区当中
+        while((len=in.read(buffer))>0){
+            //输出缓冲区的内容到浏览器，实现文件下载
+            out.write(buffer, 0, len);
+        }
+        //关闭文件输入流
+        in.close();
+        //关闭输出流
+        out.close();
+    }
 
 }

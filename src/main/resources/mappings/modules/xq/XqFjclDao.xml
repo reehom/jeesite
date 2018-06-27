@@ -21,7 +21,15 @@
 			<include refid="xqFjclColumns"/>
 		FROM xq_fjcl a
 		<include refid="xqFjclJoins"/>
-		WHERE a.id = #{id}
+		WHERE a.fjcl_id = #{id}
+	</select>
+
+	<select id="findFjclbyXqywId" resultType="XqFjcl">
+		SELECT
+			<include refid="xqFjclColumns"/>
+		FROM xq_fjcl a
+		<include refid="xqFjclJoins"/>
+		WHERE a.xq_id = #{xqId}
 	</select>
 	
 	<select id="findList" resultType="XqFjcl">
@@ -114,13 +122,13 @@
 			fjcl_ext = #{fjclExt},
 			fjcl_url = #{fjclUrl},
 			fjcl_size = #{fjclSize}
-		WHERE id = #{id}
+		WHERE fjcl_id = #{id}
 	</update>
 	
 	<update id="delete">
 		UPDATE xq_fjcl SET 
 			del_flag = #{DEL_FLAG_DELETE}
-		WHERE id = #{id}
+		WHERE fjcl_id = #{id}
 	</update>
 	
 </mapper>
