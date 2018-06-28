@@ -22,6 +22,8 @@ public class XqYw extends DataEntity<XqYw> {
 	private String xqXqms;		// 需求描述
 	private String xqXqxh;		// 需求细化
 	private String xqShr;		// 审核人
+	private String startDate;		// 开始时间
+	private String endDate;		// 结束时间
 	
 	public XqYw() {
 		super();
@@ -92,6 +94,22 @@ public class XqYw extends DataEntity<XqYw> {
 
 	public void setXqShr(String xqShr) {
 		this.xqShr = xqShr;
+	}
+
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
 	}
 	
 }

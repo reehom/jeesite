@@ -47,12 +47,15 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 		return super.findList(xqYw);
 	}
 	
-	public Page<XqYw> findPage(Page<XqYw> page, XqYw xqYw,String status) {
-
+	public Page<XqYw> findPage(Page<XqYw> page, XqYw xqYw,String status, String startDate, String endDate) {
         if (StringUtils.isNotBlank(status)){
             xqYw.setDelFlag(status);
         }else{
             xqYw.setDelFlag(null);
+        }
+        if(StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
+            xqYw.setStartDate(startDate);
+            xqYw.setEndDate(endDate);
         }
 		return super.findPage(page, xqYw);
 }
@@ -69,7 +72,9 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 	
 	@Transactional(readOnly = false)
 	public void delete(XqYw xqYw) {
-		super.delete(xqYw);
+		xqYw.preUpdate();
+		xqYw.setDelFlag(Const.XQStatus.CANCEL);
+		dao.update(xqYw);
 	}
 
 	@Transactional(readOnly = false)

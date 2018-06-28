@@ -25,10 +25,10 @@ public class Const {
         String TO_BE_AUDITED = "0";  //待审核
         String DELETE = "1";         //删除
         String  PASS= "2";           //审核通过
-        String NO_PASS = "3";        //审核没通过
+        String NO_PASS = "3";        //审核不通过
         String CODING = "4";         //开发中
         String FINISH = "5";         //已完成
-
+        String CANCEL = "9";         //已撤销
     }
 
     public interface SaveAction{
@@ -45,11 +45,24 @@ public class Const {
     }
 
     public interface LsjlZt{
-        String ADD = "0";
-        String PASS= "1";
-        String NO_PASS = "2";
-        String EDIT = "3";
+        String ADD = "0";  //建立
+        String PASS= "1";  //审核通过
+        String NO_PASS = "2";  //审核不通过
+        String EDIT = "3";   //修改
+        String DEALING = "4";  //开发中
+        String DEALT = "5";  //开发完成
+        String DELETE = "9";  //撤销
+
+    }
+
+    public interface Status{
+        String NO_DONE = "00";  //代办
+        String DONE = "01";         //已办
+        String NO_FINISH = "10";  //进行中
+        String FINISH = "11";         //已完成
     }
 
     public static final String SUCCESS = "success";
+
+    public static final String ADMINID = "1";
 }

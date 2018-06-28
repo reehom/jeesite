@@ -118,7 +118,7 @@
 		FROM xq_lsjl a
 		<include refid="xqLsjlJoins"/>
 		where xq_id = #{xqId}
-		ORDER BY a.create_date DESC
+		ORDER BY a.create_date ASC
 	</select>
 
 </mapper>

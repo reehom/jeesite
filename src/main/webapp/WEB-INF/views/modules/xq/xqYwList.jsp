@@ -6,13 +6,18 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
         $(document).ready(function() {
-             $("#resetSubmit").click(function () {
-				 $("#xqId").val("");
-				 $("#xqTitle").val("");
-				 $("#createDate").val("");
-				 $("#cDate").val("");
-				 $("#btnSubmit").click();
-             });
+            $("#resetSubmit").click(function () {
+                $("#xqId").val("");
+                $("#xqTitle").val("");
+                $("#strDate").val("");
+                $("#btnSubmit").click();
+            });
+
+            laydate.render({
+                elem: '#strDate'
+                ,range: "~"
+            });
+
         });
         function page(n,s){
             $("#pageNo").val(n);
@@ -20,11 +25,13 @@
             $("#searchForm").submit();
             return false;
         }
+
+
 	</script>
 </head>
 <body>
 <ul class="nav nav-tabs">
-	<li class="active"><a href="${ctx}/xq/xqYw/list?only=true">需求列表</a></li>
+	<li class="active"><a href="${ctx}/xq/xqYw/list">需求列表</a></li>
 	<shiro:hasPermission name="xq:xqYw:edit"><li><a href="${ctx}/xq/xqYw/add">需求添加</a></li></shiro:hasPermission>
 </ul>
 <form:form id="searchForm" modelAttribute="xqYw" action="${ctx}/xq/xqYw/" method="post" class="breadcrumb form-search">
@@ -34,18 +41,13 @@
 		<li><label>需求编号：</label>
 			<form:input id="xqId" path="xqId" htmlEscape="false" maxlength="64" class="input-medium"/>
 		</li>
-		<li><label>需求名称：</label>
+		<li>
+			<label>需求名称：</label>
 			<form:input id="xqTitle" path="xqTitle" htmlEscape="false" maxlength="64" class="input-medium"/>
 		</li>
 		<li>
 			<label>提出时间：</label>
-			<input id="createDate"  name="createDate"  type="text" readonly="readonly" maxlength="20" class="input-medium Wdate" style="width:163px;"
-				   value="<fmt:formatDate value="${xqYw.createDate}" pattern="yyyy-MM-dd"/>"
-				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
-			　--　
-			<input id="cDate" name="createDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate" style="width:163px;"
-				   value="<fmt:formatDate value="${xqYw.createDate}" pattern="yyyy-MM-dd"/>"
-				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
+			<input type="text" class="input-medium" value="${strDate}" name="strDate" id="strDate" placeholder="请选择" readonly="readonly"/>
 		</li>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 		<li class="clearfix"><input id="resetSubmit" class="btn btn-white" type="reset" value="重置"/></li>
@@ -75,9 +77,7 @@
 					${xqYw.xqSsxt}
 			</td>
 			<td>
-				<a href="${ctx}/xq/xqYw/form?id=${xqYw.xqId}">
-						${xqYw.xqTitle}
-				</a>
+				<a href="${ctx}/xq/xqYw/info?id=${xqYw.xqId}">${xqYw.xqTitle}</a>
 			</td>
 			<td>
 					${xqYw.createBy.name}
@@ -89,22 +89,49 @@
 					${xqYw.xqXqly}
 			</td>
 			<td>
-					<c:if test="${xqYw.delFlag=='0'}">待审核</c:if>
-					<c:if test="${xqYw.delFlag=='1'}">删除</c:if>
-					<c:if test="${xqYw.delFlag=='2'}">审核通过</c:if>
-					<c:if test="${xqYw.delFlag=='3'}">审核不通过</c:if>
-					<c:if test="${xqYw.delFlag=='4'}">开发中</c:if>
-					<c:if test="${xqYw.delFlag=='5'}">已完成</c:if>
+				<c:if test="${xqYw.delFlag=='0'}">待审核</c:if>
+				<c:if test="${xqYw.delFlag=='1'}">删除</c:if>
+				<c:if test="${xqYw.delFlag=='2'}">审核通过</c:if>
+				<c:if test="${xqYw.delFlag=='3'}">审核不通过</c:if>
+				<c:if test="${xqYw.delFlag=='4'}">开始开发</c:if>
+				<c:if test="${xqYw.delFlag=='5'}">已完成</c:if>
+				<c:if test="${xqYw.delFlag=='9'}">已撤销</c:if>
 			</td>
-			<shiro:hasPermission name="xq:xqYw:edit"><td>
-				<a href="${ctx}/xq/xqYw/form?id=${xqYw.xqId}">修改</a>
-				<c:if test="${xqYw.delFlag=='0'}">
-					<c:if test="${userType=='1'}">
-						<a href="${ctx}/xq/xqYw/audit?id=${xqYw.xqId}">审核</a>
+			<shiro:hasPermission name="xq:xqYw:edit">
+				<td>
+					<a href="${ctx}/xq/xqYw/info?id=${xqYw.xqId}">查看</a>&nbsp;
+
+					<c:if test="${xqYw.delFlag=='0'}">
+						<c:if test="${xqYw.createBy == fns:getUser()}">
+							<a href="${ctx}/xq/xqYw/form?id=${xqYw.xqId}">修改</a>&nbsp;
+						</c:if>
 					</c:if>
-				</c:if>
-				<a href="${ctx}/xq/xqYw/delete?id=${xqYw.xqId}" onclick="return confirmx('确认要删除该需求吗？', this.href)">删除</a>
-			</td></shiro:hasPermission>
+
+					<c:if test="${xqYw.delFlag=='0'}">
+						<c:if test="${'1'==fns:getUser()}">
+							<a href="${ctx}/xq/xqYw/audit?id=${xqYw.xqId}">审核</a>&nbsp;
+						</c:if>
+					</c:if>
+
+					<c:if test="${xqYw.delFlag=='2'}">
+						<c:if test="${'1'==fns:getUser()}">
+							<a href="${ctx}/xq/xqYw/deal?id=${xqYw.xqId}">开发中</a>&nbsp;
+						</c:if>
+					</c:if>
+
+					<c:if test="${xqYw.delFlag=='4'}">
+						<c:if test="${'1'==fns:getUser()}">
+							<a href="${ctx}/xq/xqYw/deal?id=${xqYw.xqId}">开发完成</a>&nbsp;
+						</c:if>
+					</c:if>
+
+					<c:if test="${xqYw.delFlag=='0'}">
+						<c:if test="${xqYw.createBy==fns:getUser()}">
+							<a href="${ctx}/xq/xqYw/delete?id=${xqYw.xqId}" onclick="return confirmx('确认要撤销该需求吗？', this.href)">撤销</a>
+						</c:if>
+					</c:if>
+				</td>
+			</shiro:hasPermission>
 		</tr>
 	</c:forEach>
 	</tbody>

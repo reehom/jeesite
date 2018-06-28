@@ -14,6 +14,7 @@ import com.thinkgem.jeesite.modules.xq.entity.XqFjcl;
 import com.thinkgem.jeesite.modules.xq.entity.XqLsjl;
 import com.thinkgem.jeesite.modules.xq.service.XqFjclService;
 import com.thinkgem.jeesite.modules.xq.service.XqLsjlService;
+import org.apache.commons.collections.bag.SynchronizedSortedBag;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -75,22 +76,32 @@ public class XqYwController extends BaseController {
 	 */
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(XqYw xqYw, HttpServletRequest request, HttpServletResponse response, Model model,@RequestParam(value = "status",required = false)String status,@RequestParam(value = "only",required = false)Boolean only) {
-		String userType = UserUtils.getUser().getUserType();
-		if(only != null && only == true){
+	public String list(XqYw xqYw, HttpServletRequest request, HttpServletResponse response, Model model,
+					   @RequestParam(value = "status",required = false)String status) {
+		if(!Const.ADMINID.equals(UserUtils.getUser().getId())){
 			xqYw.setCreateBy(UserUtils.getUser());
 		}
-		Page<XqYw> page = xqYwService.findPage(new Page<XqYw>(request, response), xqYw,status);
-		model.addAttribute("userType",userType);
+		xqYw.setDelFlag(status);
+
+		//日期范围选择
+		String strDate = request.getParameter("strDate");
+		String startDate = "";
+		String endDate = "";
+		if(StringUtils.isNotBlank(strDate)){
+			String[] str = strDate.split("~");
+			startDate = str[0].trim();
+			endDate = str[1].trim();
+		}
+
+		Page<XqYw> page = xqYwService.findPage(new Page<XqYw>(request, response), xqYw, status, startDate, endDate);
 		model.addAttribute("page", page);
+		model.addAttribute("strDate", strDate);
 		return "modules/xq/xqYwList";
 	}
 
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = "form")
 	public String form(XqYw xqYw, Model model) {
-		model.addAttribute("systemLists",Const.SystemLists.systemLists);
-		model.addAttribute("resourcesLists",Const.XQResource.resourcesLists);
 		model.addAttribute("xqYw", xqYw);
 		List<XqLsjl> recordLists= xqLsjlService.findRecordList(xqYw.getXqId());
 		model.addAttribute("recordLists",recordLists);
@@ -101,7 +112,7 @@ public class XqYwController extends BaseController {
 
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = "add")
-	public String form(Model model) {
+	public String add(Model model){
 		model.addAttribute("systemLists",Const.SystemLists.systemLists);
 		model.addAttribute("resourcesLists",Const.XQResource.resourcesLists);
 		return "modules/xq/xqYwAdd";
@@ -109,12 +120,8 @@ public class XqYwController extends BaseController {
 
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "save")
-	public String save(XqYw xqYw, Model  model, HttpServletRequest request, RedirectAttributes redirectAttributes,
-					   @RequestParam(value="files",required = false) MultipartFile multipartFiles[],@RequestParam(value="action",required = false)String action) {
-		model.addAttribute("systemLists",Const.SystemLists.systemLists);
-		model.addAttribute("resourcesLists",Const.XQResource.resourcesLists);
-
-		Boolean flag = true;
+	public String save(XqYw xqYw, Model  model, HttpServletRequest request, @RequestParam(value="action",required = false)String action,
+					   @RequestParam(value="files",required = false) MultipartFile multipartFiles[]) {
 
 		Integer fileLen = multipartFiles.length;
 
@@ -129,6 +136,8 @@ public class XqYwController extends BaseController {
 						return "modules/xq/xqYwAdd";
 					}*/
 					if(mul.getSize() > 5242880){
+						model.addAttribute("systemLists",Const.SystemLists.systemLists);
+						model.addAttribute("resourcesLists",Const.XQResource.resourcesLists);
 						model.addAttribute("message","上传文件不可大于5m");
 						return "modules/xq/xqYwAdd";
 					}
@@ -136,9 +145,7 @@ public class XqYwController extends BaseController {
 			}
 		}
 
-		if(!Const.SUCCESS.equals(saveYw(xqYw, model, action))){
-			flag = false;
-		}
+		saveYw(xqYw, model, action);
 
 		if(fileLen > 0){
 			for(MultipartFile mul : multipartFiles) {
@@ -170,16 +177,11 @@ public class XqYwController extends BaseController {
 			return "modules/xq/xqYwAdd";
 		}*/
 
-		if(flag){
-			addMessage(redirectAttributes, "保存需求成功");
-		}else{
-			addMessage(redirectAttributes, "保存需求失败");
-		}
-
-        return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?only=true&repage";
+		model.addAttribute("xqId",xqYw.getXqId());
+		return "modules/xq/commitSuccess";
 	}
 
-	public String saveYw(XqYw xqYw, Model  model, @RequestParam(value="action",required = false)String action){
+	public String saveYw(XqYw xqYw, Model  model, String action){
 		if (!beanValidator(model, xqYw)){
 			return form(xqYw, model);
 		}
@@ -219,12 +221,7 @@ public class XqYwController extends BaseController {
 				}else if(StringUtils.equals(action,Const.SaveAction.DENY)){
 					xqLsjl.setLsjlJlzt(Const.LsjlZt.NO_PASS);
 					xqLsjl.setXqCznr(xqYw.getXqXqxh());
-				}else if(StringUtils.equals(action,Const.SaveAction.EDIT)){
-					xqLsjl.setLsjlJlzt(Const.LsjlZt.EDIT);
-					//修改操作   需求描述为改动内容
-					xqLsjl.setXqCznr(xqYw.getXqXqms());
 				}
-
 			}
 		}
 		xqYwService.save(xqYw);
@@ -233,21 +230,67 @@ public class XqYwController extends BaseController {
 		return Const.SUCCESS;
 	}
 
+
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "delete")
 	public String delete(XqYw xqYw, RedirectAttributes redirectAttributes) {
-		xqYwService.delete(xqYw);
-		addMessage(redirectAttributes, "删除需求成功");
+		if(Const.XQStatus.TO_BE_AUDITED.equals(xqYw.getDelFlag())){
+			xqYwService.delete(xqYw);
+			/*
+			 * 生成操作历史记录
+			 * */
+			XqLsjl xqLsjl = new XqLsjl();
+			xqLsjl.setLsjlJlzt(Const.LsjlZt.DELETE);
+			xqLsjl.setXqCznr("撤销需求");
+			xqLsjl.setXqId(xqYw.getXqId());
+			xqLsjlService.save(xqLsjl);
+			addMessage(redirectAttributes, "撤销成功");
+		}else{
+			addMessage(redirectAttributes, "撤销失败");
+		}
 		return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
 	}
 
 	//跳转审核页面
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = "audit")
-	public String audit(XqYw xqYw,Model model) {
+	public String audit(XqYw xqYw, Model model) {
 		model.addAttribute("xqYw", xqYw);
+		List<XqLsjl> recordLists= xqLsjlService.findRecordList(xqYw.getXqId());
+		model.addAttribute("recordLists",recordLists);
+		List<XqFjcl> fjcl= xqFjclService.findFjclbyXqywId(xqYw.getXqId());
+		model.addAttribute("fjcl", fjcl);
 		return "modules/xq/xqYwAudit";
 	}
+
+	@RequiresPermissions("xq:xqYw:view")
+	@RequestMapping(value = "auditSave")
+	public String auditSave(XqYw xqYw, Model  model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+		String action = "";
+		String passBtn = request.getParameter("passBtn");
+		String noPassBtn = request.getParameter("noPassBtn");
+		if(StringUtils.isNotBlank(passBtn)) {
+			action = passBtn;
+		}
+		if(StringUtils.isNotBlank(noPassBtn)) {
+			action = noPassBtn;
+		}
+
+		if(StringUtils.isNotBlank(action)) {
+			if (StringUtils.equals(action, Const.SaveAction.ACCESS)) {
+				addMessage(redirectAttributes, "审核通过");
+				xqYw.setDelFlag(Const.XQStatus.PASS);
+			} else if (StringUtils.equals(action, Const.SaveAction.DENY)) {
+				xqYw.setDelFlag(Const.XQStatus.NO_PASS);
+				addMessage(redirectAttributes, "审核不通过");
+
+			}
+		}
+		saveYw(xqYw, model, action);
+		return "redirect:"+Global.getAdminPath()+"/xq/xqYw";
+	}
+
+
 
 
 	@RequiresPermissions("xq:xqYw:view")
@@ -288,5 +331,98 @@ public class XqYwController extends BaseController {
         //关闭输出流
         out.close();
     }
+
+	@RequiresPermissions("xq:xqYw:view")
+	@RequestMapping(value = "info")
+	public String info(XqYw xqYw, Model model) {
+		model.addAttribute("xqYw", xqYw);
+		List<XqLsjl> recordLists= xqLsjlService.findRecordList(xqYw.getXqId());
+		model.addAttribute("recordLists",recordLists);
+		List<XqFjcl> fjcl= xqFjclService.findFjclbyXqywId(xqYw.getXqId());
+		model.addAttribute("fjcl", fjcl);
+		return "modules/xq/xqYwInfo";
+	}
+
+	@RequiresPermissions("xq:xqYw:edit")
+	@RequestMapping(value = "update")
+	public String update(XqYw xqYw, Model  model, HttpServletRequest request, RedirectAttributes redirectAttributes,
+					   @RequestParam(value="files",required = false) MultipartFile multipartFiles[],@RequestParam(value="action",required = false)String action) {
+
+		if(!Const.XQStatus.TO_BE_AUDITED.equals(xqYw.getDelFlag())){
+			addMessage(redirectAttributes, "修改失败");
+			return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
+		}
+
+		Integer fileLen = multipartFiles.length;
+
+		//判断上传文件个数是否大于0
+		if(fileLen > 0){
+			for(MultipartFile mul : multipartFiles){
+				if(mul.getOriginalFilename() !=null && !"".equals(mul.getOriginalFilename())){
+					if(mul.getSize() > 5242880){
+
+						model.addAttribute("xqYw", xqYw);
+						List<XqLsjl> recordLists= xqLsjlService.findRecordList(xqYw.getXqId());
+						model.addAttribute("recordLists",recordLists);
+						List<XqFjcl> fjcl= xqFjclService.findFjclbyXqywId(xqYw.getXqId());
+						model.addAttribute("fjcl", fjcl);
+						model.addAttribute("message", "上传文件不可大于5m");
+
+						addMessage(redirectAttributes, "上传文件不可大于5m");
+
+						return "modules/xq/xqYwForm";
+					}
+				}
+			}
+		}
+
+		saveYw(xqYw, model, action);
+
+		if(fileLen > 0){
+			for(MultipartFile mul : multipartFiles) {
+				if( !"".equals(mul.getOriginalFilename()) && mul.getOriginalFilename() !=null ){
+					String imgName = mul.getOriginalFilename();
+					String suffix = imgName.substring(imgName.lastIndexOf(".")+1,imgName.length());
+					xqYwService.saveFjcl(xqYw.getXqId(), mul, suffix);
+				}
+			}
+		}
+
+		addMessage(redirectAttributes, "修改成功");
+		return "redirect:"+Global.getAdminPath()+"/xq/xqYw";
+	}
+
+	@RequiresPermissions("xq:xqYw:edit")
+	@RequestMapping(value = "deal")
+	public String deal(RedirectAttributes redirectAttributes,@RequestParam(value="id",required = false)String id) {
+		XqYw xqYw = xqYwService.get(id);
+		xqYw.setId(id);
+		if(Const.XQStatus.PASS.equals(xqYw.getDelFlag())){
+
+			xqYw.setDelFlag(Const.XQStatus.CODING);
+			xqYwService.save(xqYw);
+
+			XqLsjl xqLsjl = new XqLsjl();
+			xqLsjl.setLsjlJlzt(Const.LsjlZt.DEALING);
+			xqLsjl.setXqCznr("正在开发");
+			xqLsjl.setXqId(xqYw.getXqId());
+			xqLsjlService.save(xqLsjl);
+			addMessage(redirectAttributes, "操作成功");
+		}else if(Const.XQStatus.CODING.equals(xqYw.getDelFlag())){
+			xqYw.setDelFlag(Const.XQStatus.FINISH);
+			xqYwService.save(xqYw);
+
+			XqLsjl xqLsjl = new XqLsjl();
+			xqLsjl.setLsjlJlzt(Const.LsjlZt.DEALT);
+			xqLsjl.setXqCznr("开发完成");
+			xqLsjl.setXqId(xqYw.getXqId());
+			xqLsjlService.save(xqLsjl);
+			addMessage(redirectAttributes, "操作成功");
+		}else{
+			addMessage(redirectAttributes, "操作失败");
+		}
+		return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
+	}
+
 
 }

@@ -9,7 +9,6 @@
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
-                    loading('正在提交，请稍等...');
                     form.submit();
                 },
                 errorContainer: "#messageBox",
@@ -74,7 +73,13 @@
 	<div class="control-group">
 		<label class="control-label">需求描述：</label>
 		<div class="controls">
-			<form:textarea path="xqXqms" htmlEscape="false" rows="4" maxlength="255" class="input-xxlarge "/>
+			<form:textarea path="xqXqms" htmlEscape="false" rows="5" style="width:500px;" class="input-xxlarge "/>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">备注：</label>
+		<div class="controls">
+			<form:textarea path="remarks" htmlEscape="false" rows="3" style="width:500px;" class="input-xxlarge "/>
 		</div>
 	</div>
 	<div class="control-group" id="div">
@@ -82,12 +87,6 @@
 		<div class="controls">
 			<button id="addFiles" type="button"  class="btn btn-white">添加</button>&nbsp;&nbsp;&nbsp;&nbsp;
 			<button id="resetFiles" type="button"  class="btn btn-white">全部清空</button>
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label"></label>
-		<div class="controls">
-			<input type="file" name="files"  htmlEscape="false" maxlength="100" class="upload input-xxlarge" id="uploadFile"/>
 		</div>
 	</div>
 	<div class="form-actions">
