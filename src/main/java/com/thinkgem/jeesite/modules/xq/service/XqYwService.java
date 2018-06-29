@@ -69,7 +69,10 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 		}
 		super.save(xqYw);
 	}
-	
+
+	/*
+	* 需求撤销，状态修改为撤销状态
+	* */
 	@Transactional(readOnly = false)
 	public void delete(XqYw xqYw) {
 		xqYw.preUpdate();
@@ -77,11 +80,18 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 		dao.update(xqYw);
 	}
 
+	/*
+	* @param xqId
+	* @param pdfFile  上传文件数据
+	* @param suffix  上传文件后缀名
+	* */
 	@Transactional(readOnly = false)
-	public String saveFjcl(String xqId, MultipartFile pdfFile, String suffix){
+	public String saveFjcl(String xqId, MultipartFile pdfFile){
 		Date date = new Date();
 
 		String name = IdGen.uuid();
+		String imgName = pdfFile.getOriginalFilename();
+		String suffix = imgName.substring(imgName.lastIndexOf(".") + 1,imgName.length());
 		//客户端访问路径
 		String filePath = Servlets.getRequest().getContextPath() +
 				Global.USERFILES_BASE_URL + "docFile" + "/" + name +"." + suffix;

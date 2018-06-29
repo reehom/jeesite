@@ -5,16 +5,12 @@ package com.thinkgem.jeesite.modules.xq.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.thinkgem.jeesite.common.utils.IdGen;
-import com.thinkgem.jeesite.common.web.Servlets;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 import com.thinkgem.jeesite.modules.xq.common.Const;
 import com.thinkgem.jeesite.modules.xq.entity.XqFjcl;
 import com.thinkgem.jeesite.modules.xq.entity.XqLsjl;
 import com.thinkgem.jeesite.modules.xq.service.XqFjclService;
 import com.thinkgem.jeesite.modules.xq.service.XqLsjlService;
-import org.apache.commons.collections.bag.SynchronizedSortedBag;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,25 +19,19 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import com.thinkgem.jeesite.common.config.Global;
 import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.modules.xq.entity.XqYw;
 import com.thinkgem.jeesite.modules.xq.service.XqYwService;
-
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 需求业务表Controller
- * @author ThinkGem
  * @version 2018-06-21
  */
 @Controller
@@ -71,14 +61,15 @@ public class XqYwController extends BaseController {
 
 	/*
 	 *@Param  status  传进不同status  查看处于不同状态的需求   不传时返回所有状态需求
-	 *
-	 *@Param  only  only存在并为true时  返回本人的数据， 为空或false 时 返回所有用户的数据
 	 */
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(XqYw xqYw, HttpServletRequest request, HttpServletResponse response, Model model,
 					   @RequestParam(value = "status",required = false)String status) {
+
+		//判断当前用户，如是管理员则显示全部
 		if(Const.ADMINID.equals(UserUtils.getUser().getId())){
+			//判断status，是否为我的需求菜单，是则显示我的需求列表
 			if(Const.Status.NO_FINISH.equals(status) || Const.Status.FINISH.equals(status) || Const.Status.MYALL.equals(status)){
 				xqYw.setCreateBy(UserUtils.getUser());
 			}
@@ -86,11 +77,12 @@ public class XqYwController extends BaseController {
 			xqYw.setCreateBy(UserUtils.getUser());
 		}
 
+		//判断status，是否为需求审核菜单，是则返回audit到前端
 		if(Const.Status.NO_DONE.equals(status) || Const.Status.DONE.equals(status) || Const.Status.ALL.equals(status)){
 			model.addAttribute("audit", Const.SUCCESS);
 		}
 
-        xqYw.setDelFlag(status);
+		xqYw.setDelFlag(status);
 
 		//日期范围选择
 		String strDate = request.getParameter("strDate");
@@ -108,6 +100,9 @@ public class XqYwController extends BaseController {
 		return "modules/xq/xqYwList";
 	}
 
+	/*
+	 *需求修改页面
+	 */
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = "form")
 	public String form(XqYw xqYw, Model model) {
@@ -115,10 +110,13 @@ public class XqYwController extends BaseController {
 		List<XqLsjl> recordLists= xqLsjlService.findRecordList(xqYw.getXqId());
 		model.addAttribute("recordLists",recordLists);
 		List<XqFjcl> fjcl= xqFjclService.findFjclbyXqywId(xqYw.getXqId());
-        model.addAttribute("fjcl", fjcl);
+		model.addAttribute("fjcl", fjcl);
 		return "modules/xq/xqYwForm";
 	}
 
+	/*
+	 *需求添加页面
+	 */
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = "add")
 	public String add(Model model){
@@ -127,14 +125,16 @@ public class XqYwController extends BaseController {
 		return "modules/xq/xqYwAdd";
 	}
 
+	/*
+	 *保存需求
+	 */
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "save")
 	public String save(XqYw xqYw, Model  model, HttpServletRequest request, @RequestParam(value="action",required = false)String action,
 					   @RequestParam(value="files",required = false) MultipartFile multipartFiles[]) {
 
-		Integer fileLen = multipartFiles.length;
-
 		//判断上传文件个数是否大于0
+		Integer fileLen = multipartFiles.length;
 		if(fileLen > 0){
 			for(MultipartFile mul : multipartFiles){
 				if(mul.getOriginalFilename() !=null && !"".equals(mul.getOriginalFilename())){
@@ -156,12 +156,11 @@ public class XqYwController extends BaseController {
 
 		saveYw(xqYw, model, action);
 
+		//添加附件材料数据到数据库
 		if(fileLen > 0){
 			for(MultipartFile mul : multipartFiles) {
 				if(mul.getOriginalFilename() !=null && !"".equals(mul.getOriginalFilename())){
-					String imgName = mul.getOriginalFilename();
-					String suffix = imgName.substring(imgName.lastIndexOf(".")+1,imgName.length());
-					xqYwService.saveFjcl(xqYw.getXqId(), mul, suffix);
+					xqYwService.saveFjcl(xqYw.getXqId(), mul);
 				}
 			}
 		}
@@ -190,6 +189,8 @@ public class XqYwController extends BaseController {
 		return "modules/xq/commitSuccess";
 	}
 
+
+	@RequiresPermissions("xq:xqYw:edit")
 	public String saveYw(XqYw xqYw, Model  model, String action){
 		if (!beanValidator(model, xqYw)){
 			return form(xqYw, model);
@@ -242,15 +243,16 @@ public class XqYwController extends BaseController {
 		return Const.SUCCESS;
 	}
 
-
+	/*
+	 *需求撤销
+	 * */
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "delete")
 	public String delete(XqYw xqYw, RedirectAttributes redirectAttributes) {
+
+		//判断该流程是否为待审核
 		if(Const.XQStatus.TO_BE_AUDITED.equals(xqYw.getDelFlag())){
 			xqYwService.delete(xqYw);
-			/*
-			 * 生成操作历史记录
-			 * */
 			XqLsjl xqLsjl = new XqLsjl();
 			xqLsjl.setLsjlJlzt(Const.LsjlZt.DELETE);
 			xqLsjl.setXqCznr("撤销需求");
@@ -263,7 +265,9 @@ public class XqYwController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
 	}
 
-	//跳转审核页面
+	/*
+	 * 跳转审核页面
+	 * */
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = "audit")
 	public String audit(XqYw xqYw, Model model) {
@@ -275,9 +279,14 @@ public class XqYwController extends BaseController {
 		return "modules/xq/xqYwAudit";
 	}
 
+	/*
+	 * 需求审核保存
+	 * */
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = "auditSave")
 	public String auditSave(XqYw xqYw, Model  model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+
+		//从前端获取action的值，判断该动作为审核通过或不通过
 		String action = "";
 		String passBtn = request.getParameter("passBtn");
 		String noPassBtn = request.getParameter("noPassBtn");
@@ -295,7 +304,6 @@ public class XqYwController extends BaseController {
 			} else if (StringUtils.equals(action, Const.SaveAction.DENY)) {
 				xqYw.setDelFlag(Const.XQStatus.NO_PASS);
 				addMessage(redirectAttributes, "审核不通过");
-
 			}
 		}
 		saveYw(xqYw, model, action);
@@ -304,46 +312,51 @@ public class XqYwController extends BaseController {
 
 
 
-
+	/*
+	 * 文件下载
+	 * */
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = "fileDown")
 	public void fileDown(@RequestParam(required=false) String id, HttpServletRequest request, HttpServletResponse response) throws IOException {
-	    //得到要下载的文件名
-        XqFjcl fjcl = xqFjclService.get(id);
+		//得到要下载的文件名
+		XqFjcl fjcl = xqFjclService.get(id);
 
-        String fileName = fjcl.getFjclName();
-        String fileUrl = fjcl.getFjclUrl();
-        String fileLocalPath = Global.getUserfilesBaseDir() + fileUrl;
+		String fileName = fjcl.getFjclName();
+		String fileUrl = fjcl.getFjclUrl();
+		String fileLocalPath = Global.getUserfilesBaseDir() + fileUrl;
 
-        //得到要下载的文件
-        File file = new File(fileLocalPath);
-        //如果文件不存在
-        if(!file.exists()){
-            request.setAttribute("message", "您要下载的资源不存在！！");
-            return;
-        }
-        //处理文件名
-        String realname = fileName.substring(fileName.indexOf("_")+1);
-        //设置响应头，控制浏览器下载该文件
-        response.setHeader("content-disposition", "attachment;filename=" + URLEncoder.encode(realname, "UTF-8"));
-        //读取要下载的文件，保存到文件输入流
-        FileInputStream in = new FileInputStream(fileLocalPath);
-        //创建输出流
-        OutputStream out = response.getOutputStream();
-        //创建缓冲区
-        byte buffer[] = new byte[1024];
-        int len = 0;
-        //循环将输入流中的内容读取到缓冲区当中
-        while((len=in.read(buffer))>0){
-            //输出缓冲区的内容到浏览器，实现文件下载
-            out.write(buffer, 0, len);
-        }
-        //关闭文件输入流
-        in.close();
-        //关闭输出流
-        out.close();
-    }
+		//得到要下载的文件
+		File file = new File(fileLocalPath);
+		//如果文件不存在
+		if(!file.exists()){
+			request.setAttribute("message", "您要下载的资源不存在！！");
+			return;
+		}
+		//处理文件名
+		String realname = fileName.substring(fileName.indexOf("_")+1);
+		//设置响应头，控制浏览器下载该文件
+		response.setHeader("content-disposition", "attachment;filename=" + URLEncoder.encode(realname, "UTF-8"));
+		//读取要下载的文件，保存到文件输入流
+		FileInputStream in = new FileInputStream(fileLocalPath);
+		//创建输出流
+		OutputStream out = response.getOutputStream();
+		//创建缓冲区
+		byte buffer[] = new byte[1024];
+		int len = 0;
+		//循环将输入流中的内容读取到缓冲区当中
+		while((len=in.read(buffer))>0){
+			//输出缓冲区的内容到浏览器，实现文件下载
+			out.write(buffer, 0, len);
+		}
+		//关闭文件输入流
+		in.close();
+		//关闭输出流
+		out.close();
+	}
 
+	/*
+	* 跳转详情页
+	* */
 	@RequiresPermissions("xq:xqYw:view")
 	@RequestMapping(value = "info")
 	public String info(XqYw xqYw, Model model) {
@@ -355,24 +368,26 @@ public class XqYwController extends BaseController {
 		return "modules/xq/xqYwInfo";
 	}
 
+	/*
+	* 需求修改
+	* */
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "update")
 	public String update(XqYw xqYw, Model  model, HttpServletRequest request, RedirectAttributes redirectAttributes,
-					   @RequestParam(value="files",required = false) MultipartFile multipartFiles[],@RequestParam(value="action",required = false)String action) {
+						 @RequestParam(value="files",required = false) MultipartFile multipartFiles[],@RequestParam(value="action",required = false)String action) {
 
+		//判断该流程是否为待审核
 		if(!Const.XQStatus.TO_BE_AUDITED.equals(xqYw.getDelFlag())){
 			addMessage(redirectAttributes, "修改失败");
 			return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
 		}
 
-		Integer fileLen = multipartFiles.length;
-
 		//判断上传文件个数是否大于0
+		Integer fileLen = multipartFiles.length;
 		if(fileLen > 0){
 			for(MultipartFile mul : multipartFiles){
 				if(mul.getOriginalFilename() !=null && !"".equals(mul.getOriginalFilename())){
 					if(mul.getSize() > 5242880){
-
 						model.addAttribute("xqYw", xqYw);
 						List<XqLsjl> recordLists= xqLsjlService.findRecordList(xqYw.getXqId());
 						model.addAttribute("recordLists",recordLists);
@@ -390,9 +405,7 @@ public class XqYwController extends BaseController {
 		if(fileLen > 0){
 			for(MultipartFile mul : multipartFiles) {
 				if( !"".equals(mul.getOriginalFilename()) && mul.getOriginalFilename() !=null ){
-					String imgName = mul.getOriginalFilename();
-					String suffix = imgName.substring(imgName.lastIndexOf(".")+1,imgName.length());
-					xqYwService.saveFjcl(xqYw.getXqId(), mul, suffix);
+					xqYwService.saveFjcl(xqYw.getXqId(), mul);
 				}
 			}
 		}
@@ -401,13 +414,17 @@ public class XqYwController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/xq/xqYw";
 	}
 
+	/*
+	* 需求开始开发与开发完成流程动作
+	* */
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "deal")
-	public String deal(RedirectAttributes redirectAttributes,@RequestParam(value="id",required = false)String id) {
+	public String deal(RedirectAttributes redirectAttributes, @RequestParam(value="id",required = false)String id) {
 		XqYw xqYw = xqYwService.get(id);
 		xqYw.setId(id);
-		if(Const.XQStatus.PASS.equals(xqYw.getDelFlag())){
 
+		//判断当前流程状态，如果为审核通过，则进入开始开发
+		if(Const.XQStatus.PASS.equals(xqYw.getDelFlag())){
 			xqYw.setDelFlag(Const.XQStatus.CODING);
 			xqYwService.save(xqYw);
 
@@ -417,6 +434,8 @@ public class XqYwController extends BaseController {
 			xqLsjl.setXqId(xqYw.getXqId());
 			xqLsjlService.save(xqLsjl);
 			addMessage(redirectAttributes, "操作成功");
+
+			//判断当前流程状态，如果为开发中，则进入开发完成。
 		}else if(Const.XQStatus.CODING.equals(xqYw.getDelFlag())){
 			xqYw.setDelFlag(Const.XQStatus.FINISH);
 			xqYwService.save(xqYw);
@@ -427,6 +446,7 @@ public class XqYwController extends BaseController {
 			xqLsjl.setXqId(xqYw.getXqId());
 			xqLsjlService.save(xqLsjl);
 			addMessage(redirectAttributes, "操作成功");
+
 		}else{
 			addMessage(redirectAttributes, "操作失败");
 		}

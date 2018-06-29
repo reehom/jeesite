@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <html>
 <head>
-	<title>需求详情</title>
+	<title>需求审核</title>
 	<meta name="decorator" content="default"/>
 	<style type="text/css">
 		.div-left{
@@ -43,7 +43,7 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-	<li class="active"><a>需求详情</a></li>
+	<li class="active"><a>需求审核</a></li>
 </ul>
 <div>
 	<div class="div-padding-bottom">
