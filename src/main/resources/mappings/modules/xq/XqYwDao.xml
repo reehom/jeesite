@@ -65,9 +65,13 @@
 		<include refid="xqYwJoins"/>
 		<where>
 			<if test="delFlag != null and delFlag != ''">
+
 				<if test="delFlag != '10' and delFlag != '11' and delFlag != '00' and delFlag != '01'">
-					a.del_flag = #{delFlag}
+					<if test="delFlag != '000' and delFlag != '111'">
+						a.del_flag = #{delFlag}
+					</if>
 				</if>
+
 				<if test="delFlag == '10'">
 					a.del_flag in (0, 2, 4)
 				</if>

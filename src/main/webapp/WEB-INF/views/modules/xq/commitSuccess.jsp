@@ -7,7 +7,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
              $("#btnSubmit").click(function () {
-                 window.location.href="${ctx}/xq/xqYw/list?only=true";
+                 window.location.href="${ctx}/xq/xqYw/?status=10";
                  /*$.post("${ctx}/xq/xqYw/list?only=true",function(result){
                      alert("aa");
                  });*/

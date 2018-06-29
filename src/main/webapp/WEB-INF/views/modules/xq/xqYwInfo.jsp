@@ -116,7 +116,7 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" style="width: 25%">当前状态：</label>
+                    <label class="control-label" style="width: 25%">状态：</label>
                     <div class="controls" style="margin-left: 30%;">
                         <c:if test="${xqYw.delFlag=='0'}">待审核</c:if>
                         <c:if test="${xqYw.delFlag=='1'}">删除</c:if>

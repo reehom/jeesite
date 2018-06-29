@@ -60,6 +60,8 @@ public class Const {
         String DONE = "01";         //已办
         String NO_FINISH = "10";  //进行中
         String FINISH = "11";         //已完成
+        String MYALL = "111";         //我的需求-全部
+        String ALL  = "000";         //需求审核-全部
     }
 
     public static final String SUCCESS = "success";

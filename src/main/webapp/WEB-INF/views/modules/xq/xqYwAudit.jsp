@@ -63,9 +63,9 @@
 			</div>
 			<div style="text-align: center; padding-top: 30px;">
 				<div style="text-align: center; padding-top: 30px;">
-					<button class="btn" type="button" onclick="history.go(-1)"><i class="icon-chevron-left"></i> 返 回</button>&nbsp;&nbsp;
 					<button id="passBtn" name="passBtn" class="btn btn-primary" type="submit" value="access">同 意</button>&nbsp;&nbsp;
-					<button id="noPassBtn" name="noPassBtn" class="btn btn-danger" type="submit" value="deny">不同意</button>
+					<button id="noPassBtn" name="noPassBtn" class="btn btn-danger" type="submit" value="deny">不同意</button>&nbsp;&nbsp;
+					<button class="btn" type="button" onclick="history.go(-1)">返 回</button>
 				</div>
 			</div>
 		</form:form>
@@ -105,7 +105,7 @@
 				</div>
 			</div>
 			<div class="control-group">
-				<label class="control-label" style="width: 25%">当前状态：</label>
+				<label class="control-label" style="width: 25%">状态：</label>
 				<div class="controls" style="margin-left: 30%;">
 					<c:if test="${xqYw.delFlag=='0'}">待审核</c:if>
 					<c:if test="${xqYw.delFlag=='1'}">删除</c:if>

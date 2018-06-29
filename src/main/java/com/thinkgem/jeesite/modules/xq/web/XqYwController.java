@@ -78,10 +78,15 @@ public class XqYwController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(XqYw xqYw, HttpServletRequest request, HttpServletResponse response, Model model,
 					   @RequestParam(value = "status",required = false)String status) {
-		if(!Const.ADMINID.equals(UserUtils.getUser().getId())){
+		if(Const.ADMINID.equals(UserUtils.getUser().getId())){
+			if(Const.Status.NO_FINISH.equals(status) || Const.Status.FINISH.equals(status) || Const.Status.MYALL.equals(status)){
+				xqYw.setCreateBy(UserUtils.getUser());
+			}
+		}else{
 			xqYw.setCreateBy(UserUtils.getUser());
 		}
-		xqYw.setDelFlag(status);
+
+        xqYw.setDelFlag(status);
 
 		//日期范围选择
 		String strDate = request.getParameter("strDate");
@@ -221,6 +226,9 @@ public class XqYwController extends BaseController {
 				}else if(StringUtils.equals(action,Const.SaveAction.DENY)){
 					xqLsjl.setLsjlJlzt(Const.LsjlZt.NO_PASS);
 					xqLsjl.setXqCznr(xqYw.getXqXqxh());
+				}else if(StringUtils.equals(action,Const.SaveAction.EDIT)){
+					xqLsjl.setLsjlJlzt(Const.LsjlZt.EDIT);
+					xqLsjl.setXqCznr(xqYw.getXqXqms());
 				}
 			}
 		}
@@ -367,9 +375,6 @@ public class XqYwController extends BaseController {
 						List<XqFjcl> fjcl= xqFjclService.findFjclbyXqywId(xqYw.getXqId());
 						model.addAttribute("fjcl", fjcl);
 						model.addAttribute("message", "上传文件不可大于5m");
-
-						addMessage(redirectAttributes, "上传文件不可大于5m");
-
 						return "modules/xq/xqYwForm";
 					}
 				}

@@ -63,7 +63,8 @@
 		<th>提出人</th>
 		<th>提出时间</th>
 		<th>来源</th>
-		<th>状态</th>
+		<th>当前状态</th>
+		<th>下一步状态</th>
 		<shiro:hasPermission name="xq:xqYw:edit"><th>操作</th></shiro:hasPermission>
 	</tr>
 	</thead>
@@ -89,13 +90,20 @@
 					${xqYw.xqXqly}
 			</td>
 			<td>
-				<c:if test="${xqYw.delFlag=='0'}">待审核</c:if>
-				<c:if test="${xqYw.delFlag=='1'}">删除</c:if>
+				<c:if test="${xqYw.delFlag=='0'}">提交成功</c:if>
 				<c:if test="${xqYw.delFlag=='2'}">审核通过</c:if>
 				<c:if test="${xqYw.delFlag=='3'}">审核不通过</c:if>
-				<c:if test="${xqYw.delFlag=='4'}">开始开发</c:if>
+				<c:if test="${xqYw.delFlag=='4'}">开发中</c:if>
 				<c:if test="${xqYw.delFlag=='5'}">已完成</c:if>
 				<c:if test="${xqYw.delFlag=='9'}">已撤销</c:if>
+			</td>
+			<td>
+				<c:if test="${xqYw.delFlag=='0'}">待审核</c:if>
+				<c:if test="${xqYw.delFlag=='2'}">待开发</c:if>
+				<c:if test="${xqYw.delFlag=='3'}">结束</c:if>
+				<c:if test="${xqYw.delFlag=='4'}">待开发完成</c:if>
+				<c:if test="${xqYw.delFlag=='5'}">结束</c:if>
+				<c:if test="${xqYw.delFlag=='9'}">结束</c:if>
 			</td>
 			<shiro:hasPermission name="xq:xqYw:edit">
 				<td>
@@ -115,13 +123,13 @@
 
 					<c:if test="${xqYw.delFlag=='2'}">
 						<c:if test="${'1'==fns:getUser()}">
-							<a href="${ctx}/xq/xqYw/deal?id=${xqYw.xqId}">开发中</a>&nbsp;
+							<a href="${ctx}/xq/xqYw/deal?id=${xqYw.xqId}"  onclick="return confirmx('确认要开始开发该需求吗？', this.href)">开发中</a>&nbsp;
 						</c:if>
 					</c:if>
 
 					<c:if test="${xqYw.delFlag=='4'}">
 						<c:if test="${'1'==fns:getUser()}">
-							<a href="${ctx}/xq/xqYw/deal?id=${xqYw.xqId}">开发完成</a>&nbsp;
+							<a href="${ctx}/xq/xqYw/deal?id=${xqYw.xqId}"  onclick="return confirmx('确认该需求开发完成？', this.href)">开发完成</a>&nbsp;
 						</c:if>
 					</c:if>
 
