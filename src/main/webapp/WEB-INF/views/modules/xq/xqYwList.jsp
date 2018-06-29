@@ -6,6 +6,10 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
         $(document).ready(function() {
+            $("#add").click(function () {
+                window.location.href="${ctx}/xq/xqYw/add";
+            });
+
             $("#resetSubmit").click(function () {
                 $("#xqId").val("");
                 $("#xqTitle").val("");
@@ -31,9 +35,21 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-	<li class="active"><a href="${ctx}/xq/xqYw/list">需求列表</a></li>
-	<shiro:hasPermission name="xq:xqYw:edit"><li><a href="${ctx}/xq/xqYw/add">需求添加</a></li></shiro:hasPermission>
+	<c:if test="${empty audit}">
+		<li class="active"><a>需求列表</a></li>
+		<shiro:hasPermission name="xq:xqYw:edit">
+			<li><a href="${ctx}/xq/xqYw/add">需求添加</a></li>
+		</shiro:hasPermission>
+	</c:if>
+	<c:if test="${not empty audit}">
+		<li class="active"><a>需求审核列表</a></li>
+	</c:if>
 </ul>
+<c:if test="${empty audit}">
+	<div class="breadcrumb form-search" style="float: right;">
+		<button id="add" class="btn btn-info" type="button"><i class="icon-plus"></i> 新增</button>
+	</div>
+</c:if>
 <form:form id="searchForm" modelAttribute="xqYw" action="${ctx}/xq/xqYw/" method="post" class="breadcrumb form-search">
 	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
@@ -84,7 +100,7 @@
 					${xqYw.createBy.name}
 			</td>
 			<td>
-				<fmt:formatDate value="${xqYw.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				<fmt:formatDate value="${xqYw.createDate}" pattern="yyyy-MM-dd HH:mm"/>
 			</td>
 			<td>
 					${xqYw.xqXqly}
@@ -123,7 +139,7 @@
 
 					<c:if test="${xqYw.delFlag=='2'}">
 						<c:if test="${'1'==fns:getUser()}">
-							<a href="${ctx}/xq/xqYw/deal?id=${xqYw.xqId}"  onclick="return confirmx('确认要开始开发该需求吗？', this.href)">开发中</a>&nbsp;
+							<a href="${ctx}/xq/xqYw/deal?id=${xqYw.xqId}"  onclick="return confirmx('确认要开始开发该需求吗？', this.href)">开始开发</a>&nbsp;
 						</c:if>
 					</c:if>
 

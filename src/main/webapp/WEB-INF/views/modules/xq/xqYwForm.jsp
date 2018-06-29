@@ -4,6 +4,30 @@
 <head>
     <title>需求修改</title>
     <meta name="decorator" content="default"/>
+    <style type="text/css">
+        .div-left{
+            width: 64%;
+            float: left;
+            padding-left: 3%
+        }
+        .div-right{
+            width: 30%;
+            float: right;
+        }
+        .div-padding-bottom{
+            padding-bottom: 10px;
+        }
+        .div-button{
+            text-align: center;
+            padding-top: 30px;
+        }
+
+        .legend{
+            font-size: 16px;
+            font-weight: normal;
+            color: black;
+        }
+    </style>
     <script type="text/javascript">
         $(document).ready(function () {
 
@@ -23,41 +47,42 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li><a href="${ctx}/xq/xqYw/list?only=true">需求列表</a></li>
     <li class="active"><a>需求修改</a></li>
 </ul>
 <div>
 
-    <div style="padding-bottom: 10px;">
+    <div class="div-padding-bottom">
         <ul class="breadcrumb">
-            <li class="active"><h5>${xqYw.xqId}</h5></li>
+            <li class="active">
+                <span class="badge badge-info" style="font-size: 14px;padding-top: 4px;">${xqYw.xqId}</span>
+            </li>
             <li class="active" style="color: black"><h4>${xqYw.xqTitle}</h4></li>
         </ul>
     </div>
-    <div style="width: 64%;float: left; padding-left: 3%">
+    <div class="div-left">
         <form:form id="inputForm" modelAttribute="xqYw" action="${ctx}/xq/xqYw/update?action=edit" method="post" class="form-horizontal" enctype="multipart/form-data">
             <form:hidden path="id"/>
             <form:hidden path="xqId"/>
             <sys:message content="${message}"/>
-            <div style="padding-bottom: 10px;">
+            <div class="div-padding-bottom">
                 <fieldset>
-                    <legend style="font-size: 16px;font-weight: normal; color: black;">需求描述</legend>
+                    <legend class="legend">需求描述</legend>
                     <div class="article-content">
                         <form:textarea path="xqXqms" htmlEscape="false" rows="5" style="width:500px;" class="input-xxlarge "/>
                     </div>
                 </fieldset>
             </div>
-            <div style="padding-bottom: 10px;">
+            <div class="div-padding-bottom">
                 <fieldset>
-                    <legend style="font-size: 16px;font-weight: normal; color: black;">备注</legend>
+                    <legend  class="legend">备注</legend>
                     <div class="article-content">
                         <form:textarea path="remarks" htmlEscape="false" rows="3" style="width:500px;" class="input-xxlarge "/>
                     </div>
                 </fieldset>
             </div>
-            <div style="padding-bottom: 10px;">
+            <div class="div-padding-bottom">
                 <fieldset>
-                    <legend style="font-size: 16px;font-weight: normal; color: black;">附件材料&nbsp;&nbsp;
+                    <legend  class="legend">附件材料&nbsp;&nbsp;
                         <button id="addFiles" type="button"  class="btn btn-white">添加</button>
                         <button id="resetFiles" type="button"  class="btn btn-white">清空</button>
                     </legend>
@@ -77,13 +102,13 @@
                     </div>
                 </fieldset>
             </div>
-            <div style="text-align: center; padding-top: 30px;">
-                <button class="btn" type="button" onclick="history.go(-1)"><i class="icon-chevron-left"></i> 返 回</button>&nbsp;&nbsp;
-                <button class="btn btn-primary" type="submit">保存</button>
+            <div class="div-button">
+                <button class="btn btn-primary" type="submit">保 存</button>&nbsp;&nbsp;
+                <button class="btn" type="button" onclick="history.go(-1)">返 回</button>
             </div>
         </form:form>
     </div>
-    <div style="width: 30%;float: right;">
+    <div class="div-right">
         <ul class="nav nav-tabs">
             <li class="active"><a>基本信息</a></li>
         </ul>
@@ -115,7 +140,7 @@
                 <div class="controls" style="margin-left: 30%;">
                     <c:if test="${xqYw.delFlag=='0'}">待审核</c:if>
                     <c:if test="${xqYw.delFlag=='1'}">删除</c:if>
-                    <c:if test="${xqYw.delFlag=='2'}">审核通过</c:if>
+                    <c:if test="${xqYw.delFlag=='2'}">审核通过-待开发</c:if>
                     <c:if test="${xqYw.delFlag=='3'}">审核不通过</c:if>
                     <c:if test="${xqYw.delFlag=='4'}">开发中</c:if>
                     <c:if test="${xqYw.delFlag=='5'}">已完成</c:if>
@@ -124,7 +149,7 @@
             </div>
         </form:form>
     </div>
-    <div style="width: 30%;float: right; padding-top: 20px;">
+    <div class="div-right">
         <ul class="nav nav-tabs">
             <li class="active"><a>历史记录</a></li>
         </ul>
@@ -133,7 +158,7 @@
             <c:forEach items="${recordLists}" var="record">
                 <tr>
                     <td style="width: 40%;">
-                        <fmt:formatDate value="${record.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                        <fmt:formatDate value="${record.createDate}" pattern="yyyy-MM-dd HH:mm"/>
                     </td>
                     <td style="width: 30%;">
                             ${record.createBy.name}

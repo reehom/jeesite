@@ -86,6 +86,10 @@ public class XqYwController extends BaseController {
 			xqYw.setCreateBy(UserUtils.getUser());
 		}
 
+		if(Const.Status.NO_DONE.equals(status) || Const.Status.DONE.equals(status) || Const.Status.ALL.equals(status)){
+			model.addAttribute("audit", Const.SUCCESS);
+		}
+
         xqYw.setDelFlag(status);
 
 		//日期范围选择
