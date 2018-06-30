@@ -65,10 +65,10 @@ public class Const {
     }
 
     public interface XqLevel{
-        String LEVEL1 = "不重要";     //不重要
+        String LEVEL1 = "一般";     //一般
         String LEVEL2 = "次要";     //次要
         String LEVEL3 = "主要";     //主要
-        String LEVEL4 = "严重";     //严重
+        String LEVEL4 = "紧急";     //紧急
         List<String> levelLists = Lists.newArrayList(LEVEL1,LEVEL2,LEVEL3,LEVEL4);
     }
 

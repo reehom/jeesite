@@ -13,6 +13,7 @@
         .div-right{
             width: 30%;
             float: right;
+            padding-right: 15px;
         }
         .div-hero-unit{
              /* padding: 60px; */
@@ -98,7 +99,7 @@
                         <button id="addFiles" type="button"  class="btn btn-white">添加</button>
                         <button id="resetFiles" type="button"  class="btn btn-white">清空</button>
                     </legend>
-                    <div style="float: left;width: 50%">
+                    <div style="float: left;width: 40%">
                         <div class="article-content" >
                             <c:if test="${empty fjcl}">无</c:if>
                             <c:if test="${not empty fjcl}">
@@ -108,7 +109,7 @@
                             </c:if>
                         </div>
                     </div>
-                    <div style="float: right;width: 50%">
+                    <div style="float: right;width: 60%">
                         <div class="article-content" id="div">
                         </div>
                     </div>
@@ -151,10 +152,10 @@
             <div class="control-group">
                 <label class="control-label" style="width: 25%">优先级：</label>
                 <div class="controls" style="margin-left: 30%;">
-                    <c:if test="${'不重要'.equals(xqYw.xqYxj)}"><span class="badge">不重要</span></c:if>
-                    <c:if test="${'次要'.equals(xqYw.xqYxj)}"><span class="badge badge-info">次要</span></c:if>
-                    <c:if test="${'主要'.equals(xqYw.xqYxj)}"><span class="badge badge-warning">主要</span></c:if>
-                    <c:if test="${'严重'.equals(xqYw.xqYxj)}"><span class="badge badge-important">严重</span></c:if>
+                    <c:if test="${'一般'.equals(xqYw.xqYxj)}"><span class="badge">一般</span> - 次要 - 主要 - 紧急</c:if>
+                    <c:if test="${'次要'.equals(xqYw.xqYxj)}">一般 - <span class="badge badge-info">次要</span> - 主要 - 紧急</c:if>
+                    <c:if test="${'主要'.equals(xqYw.xqYxj)}">一般 - 次要 - <span class="badge badge-warning">主要</span> - 紧急</c:if>
+                    <c:if test="${'紧急'.equals(xqYw.xqYxj)}">一般 - 次要 - 主要 - <span class="badge badge-important">紧急</span></c:if>
                 </div>
             </div>
             <div class="control-group">
