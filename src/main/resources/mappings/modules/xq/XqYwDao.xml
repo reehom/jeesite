@@ -10,6 +10,7 @@
 		a.xq_xqms AS "xqXqms",
 		a.xq_xqxh AS "xqXqxh",
 		a.xq_shr AS "xqShr",
+		a.xq_yxj AS "xqYxj",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
@@ -92,6 +93,9 @@
 			<if test="xqTitle != null and xqTitle != ''">
 				AND a.xq_title = #{xqTitle}
 			</if>
+			<if test="xqYxj != null and xqYxj != ''">
+				AND a.xq_yxj = #{xqYxj}
+			</if>
 			<if test="createBy != null and createBy.id != null and createBy.id != ''">
 				AND a.create_by = #{createBy.id}
 			</if>
@@ -136,6 +140,7 @@
 			xq_xqms,
 			xq_xqxh,
 			xq_shr,
+			xq_yxj,
 			create_by,
 			create_date,
 			update_by,
@@ -150,6 +155,7 @@
 			#{xqXqms},
 			#{xqXqxh},
 			#{xqShr},
+			#{xqYxj},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
@@ -168,6 +174,7 @@
 			xq_xqms = #{xqXqms},
 			xq_xqxh = #{xqXqxh},
 			xq_shr = #{xqShr},
+			xq_yxj = #{xqYxj},
 			del_flag = #{delFlag},
 			update_by = #{updateBy.id},
 			update_date = #{updateDate},

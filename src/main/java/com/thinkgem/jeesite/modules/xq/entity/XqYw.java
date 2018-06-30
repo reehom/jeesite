@@ -24,7 +24,8 @@ public class XqYw extends DataEntity<XqYw> {
 	private String xqShr;		// 审核人
 	private String startDate;		// 开始时间
 	private String endDate;		// 结束时间
-	
+	private String xqYxj;		// 优先级
+
 	public XqYw() {
 		super();
 	}
@@ -94,6 +95,15 @@ public class XqYw extends DataEntity<XqYw> {
 
 	public void setXqShr(String xqShr) {
 		this.xqShr = xqShr;
+	}
+
+	@Length(min=0, max=64, message="优先级长度必须介于 0 和 64 之间")
+	public String getXqYxj() {
+		return xqYxj;
+	}
+
+	public void setXqYxj(String xqYxj) {
+		this.xqYxj = xqYxj;
 	}
 
 

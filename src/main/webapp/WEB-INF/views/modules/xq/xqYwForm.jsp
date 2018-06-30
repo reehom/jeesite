@@ -136,6 +136,15 @@
                 </div>
             </div>
             <div class="control-group">
+                <label class="control-label" style="width: 25%">优先级：</label>
+                <div class="controls" style="margin-left: 30%;">
+                    <c:if test="${'不重要'.equals(xqYw.xqYxj)}"><span class="badge">不重要</span></c:if>
+                    <c:if test="${'次要'.equals(xqYw.xqYxj)}"><span class="badge badge-info">次要</span></c:if>
+                    <c:if test="${'主要'.equals(xqYw.xqYxj)}"><span class="badge badge-warning">主要</span></c:if>
+                    <c:if test="${'严重'.equals(xqYw.xqYxj)}"><span class="badge badge-important">严重</span></c:if>
+                </div>
+            </div>
+            <div class="control-group">
                 <label class="control-label" style="width: 25%">状态：</label>
                 <div class="controls" style="margin-left: 30%;">
                     <c:if test="${xqYw.delFlag=='0'}">待审核</c:if>
@@ -155,8 +164,11 @@
         </ul>
         <table class="table table-hover">
             <tbody>
-            <c:forEach items="${recordLists}" var="record">
+            <c:forEach items="${recordLists}" var="record" varStatus="status">
                 <tr>
+                    <td>
+                            ${status.index + 1}
+                    </td>
                     <td style="width: 40%;">
                         <fmt:formatDate value="${record.createDate}" pattern="yyyy-MM-dd HH:mm"/>
                     </td>

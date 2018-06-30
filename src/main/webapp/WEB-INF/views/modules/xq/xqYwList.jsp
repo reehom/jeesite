@@ -6,6 +6,8 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
         $(document).ready(function() {
+            $("#levelSelect").append('<option value="" selected = "selected" >全部</option>');
+
             $("#add").click(function () {
                 window.location.href="${ctx}/xq/xqYw/addPage";
             });
@@ -50,7 +52,7 @@
 		<button id="add" class="btn btn-info" type="button"><i class="icon-plus"></i> 新增</button>
 	</div>
 </c:if>
-<form:form id="searchForm" modelAttribute="xqYw" action="${ctx}/xq/xqYw/" method="post" class="breadcrumb form-search">
+<form:form id="searchForm" modelAttribute="xqYw" action="${ctx}/xq/xqYw/?status=${status}" method="post" class="breadcrumb form-search">
 	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 	<ul class="ul-form">
@@ -65,6 +67,10 @@
 			<label>提出时间：</label>
 			<input type="text" class="input-medium" value="${strDate}" name="strDate" id="strDate" placeholder="请选择" readonly="readonly"/>
 		</li>
+		<li>
+			<label>优先级：</label>
+			<form:select id="levelSelect" path="xqYxj" htmlEscape="false"  class="input-xlarge" items="${levelLists}" style="width:150px;"/>
+		</li>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 		<li class="clearfix"><input id="resetSubmit" class="btn btn-white" type="reset" value="重置"/></li>
 	</ul>
@@ -73,7 +79,9 @@
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
 	<thead>
 	<tr>
+		<th>序号</th>
 		<th>需求编号</th>
+		<th>优先级</th>
 		<th>所属系统</th>
 		<th>需求名称</th>
 		<th>提出人</th>
@@ -85,10 +93,16 @@
 	</tr>
 	</thead>
 	<tbody>
-	<c:forEach items="${page.list}" var="xqYw">
+	<c:forEach items="${page.list}" var="xqYw" varStatus="status">
 		<tr>
 			<td>
+					${status.index + 1}
+			</td>
+			<td>
 					${xqYw.xqId}
+			</td>
+			<td>
+					${xqYw.xqYxj}
 			</td>
 			<td>
 					${xqYw.xqSsxt}

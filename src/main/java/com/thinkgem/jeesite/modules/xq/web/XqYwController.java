@@ -11,6 +11,7 @@ import com.thinkgem.jeesite.modules.xq.entity.XqFjcl;
 import com.thinkgem.jeesite.modules.xq.entity.XqLsjl;
 import com.thinkgem.jeesite.modules.xq.service.XqFjclService;
 import com.thinkgem.jeesite.modules.xq.service.XqLsjlService;
+import com.thinkgem.jeesite.modules.xq.utils.DateTimeUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,7 @@ import com.thinkgem.jeesite.modules.xq.entity.XqYw;
 import com.thinkgem.jeesite.modules.xq.service.XqYwService;
 import java.io.*;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,6 +39,11 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "${adminPath}/xq/xqYw")
 public class XqYwController extends BaseController {
+
+	private static final String  LEVEL1 = "1";
+	private static final String  LEVEL2 = "2";
+	private static final String  LEVEL3 = "3";
+	private static final String  LEVEL4 = "4";
 
 	@Autowired
 	private XqYwService xqYwService;
@@ -97,6 +104,8 @@ public class XqYwController extends BaseController {
 		Page<XqYw> page = xqYwService.findPage(new Page<XqYw>(request, response), xqYw, status, startDate, endDate);
 		model.addAttribute("page", page);
 		model.addAttribute("strDate", strDate);
+		model.addAttribute("status", status);
+		model.addAttribute("levelLists", Const.XqLevel.levelLists);
 		return "modules/xq/xqYwList";
 	}
 
@@ -108,6 +117,7 @@ public class XqYwController extends BaseController {
 	public String addPage(Model model){
 		model.addAttribute("systemLists",Const.SystemLists.systemLists);
 		model.addAttribute("resourcesLists",Const.XQResource.resourcesLists);
+		model.addAttribute("levelLists",Const.XqLevel.levelLists);
 		return "modules/xq/xqYwAdd";
 	}
 

@@ -71,6 +71,13 @@
 		</div>
 	</div>
 	<div class="control-group">
+		<label class="control-label">优先级：</label>
+		<div class="controls">
+			<form:select path="xqYxj" htmlEscape="false"  class="input-xlarge required" items="${levelLists}" style = "width:285px;"/>
+			<span class="help-inline" style="color: red">*</span>
+		</div>
+	</div>
+	<div class="control-group">
 		<label class="control-label">需求描述：</label>
 		<div class="controls">
 			<form:textarea path="xqXqms" htmlEscape="false" rows="5" style="width:500px;" class="input-xxlarge "/>

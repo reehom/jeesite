@@ -64,7 +64,8 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 	public void save(XqYw xqYw) {
 		Date date = new Date();
 		if(StringUtils.isBlank(xqYw.getXqId())){
-			String XqId = "XQ"+DateTimeUtil.IdGenStr(date)+Math.round(Math.random()*100);
+			String dateStr = String.valueOf(date.getTime());
+			String XqId = "XQ" + dateStr.substring(0, 11) + Math.round(Math.random()*10);
 			xqYw.setXqId(XqId);
 		}
 		super.save(xqYw);
@@ -110,7 +111,9 @@ public class XqYwService extends CrudService<XqYwDao, XqYw> {
 		}
 
 		XqFjcl fjcl = new XqFjcl();
-		fjcl.setFjclId("WJ"+DateTimeUtil.IdGenStr(date)+Math.round(Math.random()*100));
+		String dateStr = String.valueOf(date.getTime());
+		String XqId = "WJ" + dateStr.substring(0, 11) + Math.round(Math.random() * 10);
+		fjcl.setFjclId(XqId);
 		fjcl.setXqId(xqId);
 		fjcl.setFjclCode(xqId);
 		fjcl.setFjclUrl(filePath);

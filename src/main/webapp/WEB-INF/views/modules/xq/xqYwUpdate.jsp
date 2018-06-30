@@ -14,6 +14,18 @@
             width: 30%;
             float: right;
         }
+        .div-hero-unit{
+             /* padding: 60px; */
+             margin-bottom: 30px;
+             /*font-size: 14px;*/
+             /* font-weight: 200; */
+             /* line-height: 30px; */
+             color: inherit;
+             background-color: #f5f5f5;
+             -webkit-border-radius: 6px;
+             -moz-border-radius: 6px;
+             border-radius: 6px;
+         }
         .div-padding-bottom{
             padding-bottom: 10px;
         }
@@ -109,9 +121,10 @@
         </form:form>
     </div>
     <div class="div-right">
-        <ul class="nav nav-tabs">
-            <li class="active"><a>基本信息</a></li>
+        <ul class="nav nav-tabs"  style="margin-bottom: 0px;">
+            <li class="active"><a><h5>基本信息</h5></a></li>
         </ul>
+        <div class="div-hero-unit" style="padding-top: 10px;">
         <form:form id="inputForm" method="post" class="form-horizontal" enctype="multipart/form-data">
             <div class="control-group">
                 <label class="control-label" style="width: 25%">提出人：</label>
@@ -136,6 +149,15 @@
                 </div>
             </div>
             <div class="control-group">
+                <label class="control-label" style="width: 25%">优先级：</label>
+                <div class="controls" style="margin-left: 30%;">
+                    <c:if test="${'不重要'.equals(xqYw.xqYxj)}"><span class="badge">不重要</span></c:if>
+                    <c:if test="${'次要'.equals(xqYw.xqYxj)}"><span class="badge badge-info">次要</span></c:if>
+                    <c:if test="${'主要'.equals(xqYw.xqYxj)}"><span class="badge badge-warning">主要</span></c:if>
+                    <c:if test="${'严重'.equals(xqYw.xqYxj)}"><span class="badge badge-important">严重</span></c:if>
+                </div>
+            </div>
+            <div class="control-group">
                 <label class="control-label" style="width: 25%">状态：</label>
                 <div class="controls" style="margin-left: 30%;">
                     <c:if test="${xqYw.delFlag=='0'}">待审核</c:if>
@@ -148,15 +170,20 @@
                 </div>
             </div>
         </form:form>
+        </div>
     </div>
     <div class="div-right">
-        <ul class="nav nav-tabs">
-            <li class="active"><a>历史记录</a></li>
+        <ul class="nav nav-tabs" style="margin-bottom: 0px;">
+            <li class="active"><a><h5>历史记录</h5></a></li>
         </ul>
-        <table class="table table-hover">
+        <div class="div-hero-unit">
+        <table class="table table-hover" style="background-color: #eee;">
             <tbody>
-            <c:forEach items="${recordLists}" var="record">
+            <c:forEach items="${recordLists}" var="record" varStatus="status">
                 <tr>
+                    <td >
+                            ${status.index + 1}
+                    </td>
                     <td style="width: 40%;">
                         <fmt:formatDate value="${record.createDate}" pattern="yyyy-MM-dd HH:mm"/>
                     </td>
@@ -176,6 +203,7 @@
             </c:forEach>
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 </body>
