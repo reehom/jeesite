@@ -24,7 +24,7 @@
              });
 
              $("#resetSubmit").click(function () {
-                 window.location.href="${ctx}/xq/xqYw/add";
+                 window.location.href="${ctx}/xq/xqYw/addPage";
                  /*$.post("${ctx}/xq/xqYw/add",function(result){
                      alert("ss");
                  });*/

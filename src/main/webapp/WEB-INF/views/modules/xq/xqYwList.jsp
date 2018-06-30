@@ -7,7 +7,7 @@
 	<script type="text/javascript">
         $(document).ready(function() {
             $("#add").click(function () {
-                window.location.href="${ctx}/xq/xqYw/add";
+                window.location.href="${ctx}/xq/xqYw/addPage";
             });
 
             $("#resetSubmit").click(function () {
@@ -38,7 +38,7 @@
 	<c:if test="${empty audit}">
 		<li class="active"><a>需求列表</a></li>
 		<shiro:hasPermission name="xq:xqYw:edit">
-			<li><a href="${ctx}/xq/xqYw/add">需求添加</a></li>
+			<li><a href="${ctx}/xq/xqYw/addPage">需求添加</a></li>
 		</shiro:hasPermission>
 	</c:if>
 	<c:if test="${not empty audit}">
@@ -94,7 +94,7 @@
 					${xqYw.xqSsxt}
 			</td>
 			<td>
-				<a href="${ctx}/xq/xqYw/info?id=${xqYw.xqId}">${xqYw.xqTitle}</a>
+				<a href="${ctx}/xq/xqYw/infoPage?id=${xqYw.xqId}">${xqYw.xqTitle}</a>
 			</td>
 			<td>
 					${xqYw.createBy.name}
@@ -123,17 +123,17 @@
 			</td>
 			<shiro:hasPermission name="xq:xqYw:edit">
 				<td>
-					<a href="${ctx}/xq/xqYw/info?id=${xqYw.xqId}">查看</a>&nbsp;
+					<a href="${ctx}/xq/xqYw/infoPage?id=${xqYw.xqId}">查看</a>&nbsp;
 
 					<c:if test="${xqYw.delFlag=='0'}">
 						<c:if test="${xqYw.createBy == fns:getUser()}">
-							<a href="${ctx}/xq/xqYw/form?id=${xqYw.xqId}">修改</a>&nbsp;
+							<a href="${ctx}/xq/xqYw/updatePage?id=${xqYw.xqId}">修改</a>&nbsp;
 						</c:if>
 					</c:if>
 
 					<c:if test="${xqYw.delFlag=='0'}">
 						<c:if test="${'1'==fns:getUser()}">
-							<a href="${ctx}/xq/xqYw/audit?id=${xqYw.xqId}">审核</a>&nbsp;
+							<a href="${ctx}/xq/xqYw/auditPage?id=${xqYw.xqId}">审核</a>&nbsp;
 						</c:if>
 					</c:if>
 

@@ -101,25 +101,11 @@ public class XqYwController extends BaseController {
 	}
 
 	/*
-	 *需求修改页面
-	 */
-	@RequiresPermissions("xq:xqYw:view")
-	@RequestMapping(value = "form")
-	public String form(XqYw xqYw, Model model) {
-		model.addAttribute("xqYw", xqYw);
-		List<XqLsjl> recordLists= xqLsjlService.findRecordList(xqYw.getXqId());
-		model.addAttribute("recordLists",recordLists);
-		List<XqFjcl> fjcl= xqFjclService.findFjclbyXqywId(xqYw.getXqId());
-		model.addAttribute("fjcl", fjcl);
-		return "modules/xq/xqYwForm";
-	}
-
-	/*
 	 *需求添加页面
 	 */
 	@RequiresPermissions("xq:xqYw:view")
-	@RequestMapping(value = "add")
-	public String add(Model model){
+	@RequestMapping(value = "addPage")
+	public String addPage(Model model){
 		model.addAttribute("systemLists",Const.SystemLists.systemLists);
 		model.addAttribute("resourcesLists",Const.XQResource.resourcesLists);
 		return "modules/xq/xqYwAdd";
@@ -130,7 +116,7 @@ public class XqYwController extends BaseController {
 	 */
 	@RequiresPermissions("xq:xqYw:edit")
 	@RequestMapping(value = "save")
-	public String save(XqYw xqYw, Model  model, HttpServletRequest request, @RequestParam(value="action",required = false)String action,
+	public String save(XqYw xqYw, Model  model,  @RequestParam(value="action",required = false)String action,
 					   @RequestParam(value="files",required = false) MultipartFile multipartFiles[]) {
 
 		//判断上传文件个数是否大于0
@@ -138,12 +124,6 @@ public class XqYwController extends BaseController {
 		if(fileLen > 0){
 			for(MultipartFile mul : multipartFiles){
 				if(mul.getOriginalFilename() !=null && !"".equals(mul.getOriginalFilename())){
-					String imgName = mul.getOriginalFilename();
-					String suffix = imgName.substring(imgName.lastIndexOf(".")+1,imgName.length());
-					/*if(!"pdf".equals(suffix)){
-						model.addAttribute("message","上传格式不正确,仅限pdf文件");
-						return "modules/xq/xqYwAdd";
-					}*/
 					if(mul.getSize() > 5242880){
 						model.addAttribute("systemLists",Const.SystemLists.systemLists);
 						model.addAttribute("resourcesLists",Const.XQResource.resourcesLists);
@@ -192,20 +172,25 @@ public class XqYwController extends BaseController {
 
 	@RequiresPermissions("xq:xqYw:edit")
 	public String saveYw(XqYw xqYw, Model  model, String action){
+
+		//TODO: ？？
 		if (!beanValidator(model, xqYw)){
-			return form(xqYw, model);
+			return updatePage(xqYw, model);
 		}
+
 		if(StringUtils.isNotBlank(action)){
 			if(StringUtils.equals(action,Const.SaveAction.ACCESS)){
 				xqYw.setDelFlag(Const.XQStatus.PASS);
 				xqYw.setXqShr(UserUtils.getUser().getName());
+
 			}else if(StringUtils.equals(action,Const.SaveAction.DENY)){
 				xqYw.setDelFlag(Const.XQStatus.NO_PASS);
 				xqYw.setXqShr(UserUtils.getUser().getName());
+
 			}else if(StringUtils.equals(action,Const.SaveAction.EDIT)){
 				xqYw.setDelFlag(Const.XQStatus.TO_BE_AUDITED);
-			}
 
+			}
 		}
 
 		/*
@@ -269,8 +254,8 @@ public class XqYwController extends BaseController {
 	 * 跳转审核页面
 	 * */
 	@RequiresPermissions("xq:xqYw:view")
-	@RequestMapping(value = "audit")
-	public String audit(XqYw xqYw, Model model) {
+	@RequestMapping(value = "auditPage")
+	public String auditPage(XqYw xqYw, Model model) {
 		model.addAttribute("xqYw", xqYw);
 		List<XqLsjl> recordLists= xqLsjlService.findRecordList(xqYw.getXqId());
 		model.addAttribute("recordLists",recordLists);
@@ -358,8 +343,8 @@ public class XqYwController extends BaseController {
 	* 跳转详情页
 	* */
 	@RequiresPermissions("xq:xqYw:view")
-	@RequestMapping(value = "info")
-	public String info(XqYw xqYw, Model model) {
+	@RequestMapping(value = "infoPage")
+	public String infoPage(XqYw xqYw, Model model) {
 		model.addAttribute("xqYw", xqYw);
 		List<XqLsjl> recordLists= xqLsjlService.findRecordList(xqYw.getXqId());
 		model.addAttribute("recordLists",recordLists);
@@ -367,6 +352,22 @@ public class XqYwController extends BaseController {
 		model.addAttribute("fjcl", fjcl);
 		return "modules/xq/xqYwInfo";
 	}
+
+
+	/*
+	 *需求修改页面
+	 */
+	@RequiresPermissions("xq:xqYw:view")
+	@RequestMapping(value = "updatePage")
+	public String updatePage(XqYw xqYw, Model model) {
+		model.addAttribute("xqYw", xqYw);
+		List<XqLsjl> recordLists= xqLsjlService.findRecordList(xqYw.getXqId());
+		model.addAttribute("recordLists",recordLists);
+		List<XqFjcl> fjcl= xqFjclService.findFjclbyXqywId(xqYw.getXqId());
+		model.addAttribute("fjcl", fjcl);
+		return "modules/xq/xqYwUpdate";
+	}
+
 
 	/*
 	* 需求修改
@@ -394,7 +395,7 @@ public class XqYwController extends BaseController {
 						List<XqFjcl> fjcl= xqFjclService.findFjclbyXqywId(xqYw.getXqId());
 						model.addAttribute("fjcl", fjcl);
 						model.addAttribute("message", "上传文件不可大于5m");
-						return "modules/xq/xqYwForm";
+						return "modules/xq/xqYwUpdate";
 					}
 				}
 			}
