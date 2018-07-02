@@ -388,7 +388,7 @@ public class XqYwController extends BaseController {
 						 @RequestParam(value="files",required = false) MultipartFile multipartFiles[],@RequestParam(value="action",required = false)String action) {
 
 		//判断该流程是否为待审核
-		if(!Const.XQStatus.TO_BE_AUDITED.equals(xqYw.getDelFlag())){
+		if(!StringUtils.equals(Const.XQStatus.TO_BE_AUDITED,xqYw.getDelFlag())){
 			addMessage(redirectAttributes, "修改失败");
 			return "redirect:"+Global.getAdminPath()+"/xq/xqYw/?repage";
 		}
@@ -397,7 +397,7 @@ public class XqYwController extends BaseController {
 		Integer fileLen = multipartFiles.length;
 		if(fileLen > 0){
 			for(MultipartFile mul : multipartFiles){
-				if(mul.getOriginalFilename() !=null && !"".equals(mul.getOriginalFilename())){
+				if(StringUtils.isNotBlank(mul.getOriginalFilename())){
 					if(mul.getSize() > 5242880){
 						model.addAttribute("xqYw", xqYw);
 						List<XqLsjl> recordLists= xqLsjlService.findRecordList(xqYw.getXqId());
@@ -415,7 +415,7 @@ public class XqYwController extends BaseController {
 
 		if(fileLen > 0){
 			for(MultipartFile mul : multipartFiles) {
-				if( !"".equals(mul.getOriginalFilename()) && mul.getOriginalFilename() !=null ){
+				if(StringUtils.isNotBlank(mul.getOriginalFilename())){
 					xqYwService.saveFjcl(xqYw.getXqId(), mul);
 				}
 			}

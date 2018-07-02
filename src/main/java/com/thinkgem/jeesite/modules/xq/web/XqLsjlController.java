@@ -25,10 +25,6 @@ import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.modules.xq.entity.XqLsjl;
 import com.thinkgem.jeesite.modules.xq.service.XqLsjlService;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-
 /**
  * 需求业务表Controller
  * @author ThinkGem
