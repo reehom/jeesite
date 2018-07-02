@@ -107,13 +107,18 @@
                                     ${record.createBy.name}
                             </td>
                             <td style="width: 25%;">
-                                <c:if test="${record.lsjlJlzt=='0'}">建立</c:if>
-                                <c:if test="${record.lsjlJlzt=='1'}">审核通过</c:if>
-                                <c:if test="${record.lsjlJlzt=='2'}">审核不通过</c:if>
-                                <c:if test="${record.lsjlJlzt=='3'}">修改</c:if>
-                                <c:if test="${record.lsjlJlzt=='4'}">开发中</c:if>
-                                <c:if test="${record.lsjlJlzt=='5'}">开发完成</c:if>
-                                <c:if test="${record.lsjlJlzt=='9'}">撤销</c:if>
+
+                                <a href="#" class="list-group-item" data-toggle="modal" data-target="#exampleModal"
+                                   data-whatever="${record.lsjlId}">
+                                    <c:if test="${record.lsjlJlzt=='0'}">建立</c:if>
+                                    <c:if test="${record.lsjlJlzt=='1'}">审核通过</c:if>
+                                    <c:if test="${record.lsjlJlzt=='2'}">审核不通过</c:if>
+                                    <c:if test="${record.lsjlJlzt=='3'}">修改</c:if>
+                                    <c:if test="${record.lsjlJlzt=='4'}">开发中</c:if>
+                                    <c:if test="${record.lsjlJlzt=='5'}">开发完成</c:if>
+                                    <c:if test="${record.lsjlJlzt=='9'}">撤销</c:if>
+                                </a>
+
                             </td>
                         </tr>
                     </c:forEach>
@@ -185,5 +190,63 @@
         </div>
     </div>
 </div>
+
+
+
+<!--弹出框  显示历史记录的内容  -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="message-text" class="control-label">记录内容:</label>
+                        <div div class="article-content" id="record_cznr"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxStatic}/jquery/jquery-1.9.1.js"></script>
+<script src="${ctxStatic}/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
+
+<!--通过ajax 获取相关操作内容 并显示出来 -->
+<script>
+
+
+    $('#exampleModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // 触发事件的按钮
+        var recordId = button.data('whatever') // 解析出data-whatever内容
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            url: "${ctx}/xq/xqLsjl/get",
+            data:{"id":recordId},
+            success:function (result) {
+                var status = result['status'];
+                var data = result['data'];
+                var msg = result['msg'];
+                if(status == 0){
+                    $("#record_cznr").html(data['xqCznr']);
+                }else {
+                    alert(result[msg]);
+                }
+
+            },
+            error:function () {
+                alert("Error");
+            }
+        })
+    })
+</script>
+
 </body>
 </html>

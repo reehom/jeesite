@@ -26,7 +26,7 @@
 			<include refid="xqLsjlColumns"/>
 		FROM xq_lsjl a
 		<include refid="xqLsjlJoins"/>
-		WHERE a.id = #{id}
+		WHERE a.lsjl_id = #{id}
 	</select>
 	
 	<select id="findList" resultType="XqLsjl">

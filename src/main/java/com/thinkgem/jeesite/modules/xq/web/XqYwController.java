@@ -435,7 +435,8 @@ public class XqYwController extends BaseController {
 		xqYw.setId(id);
 
 		//判断当前流程状态，如果为审核通过，则进入开始开发
-		if(Const.XQStatus.PASS.equals(xqYw.getDelFlag())){
+
+		if(StringUtils.equals(Const.XQStatus.PASS,xqYw.getDelFlag())){
 			xqYw.setDelFlag(Const.XQStatus.CODING);
 			xqYwService.save(xqYw);
 
@@ -447,7 +448,7 @@ public class XqYwController extends BaseController {
 			addMessage(redirectAttributes, "操作成功");
 
 			//判断当前流程状态，如果为开发中，则进入开发完成。
-		}else if(Const.XQStatus.CODING.equals(xqYw.getDelFlag())){
+		}else if(StringUtils.equals(Const.XQStatus.CODING,xqYw.getDelFlag())){
 			xqYw.setDelFlag(Const.XQStatus.FINISH);
 			xqYwService.save(xqYw);
 

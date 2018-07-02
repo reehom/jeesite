@@ -6,6 +6,7 @@ package com.thinkgem.jeesite.modules.xq.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.thinkgem.jeesite.modules.xq.common.ServerResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thinkgem.jeesite.common.config.Global;
@@ -22,6 +24,10 @@ import com.thinkgem.jeesite.common.web.BaseController;
 
 import com.thinkgem.jeesite.modules.xq.entity.XqLsjl;
 import com.thinkgem.jeesite.modules.xq.service.XqLsjlService;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * 需求业务表Controller
@@ -80,5 +86,19 @@ public class XqLsjlController extends BaseController {
 		addMessage(redirectAttributes, "删除需求成功");
 		return "redirect:"+Global.getAdminPath()+"/xq/xqLsjl/?repage";
 	}
+
+	@RequestMapping(value = "get")
+	@ResponseBody
+	public ServerResponse<XqLsjl> getLsjl(XqLsjl xqLsjl, String id){
+		if(xqLsjl==null){
+			return ServerResponse.createByErrorMessage("找不到该记录");
+		}
+
+		return ServerResponse.createBySuccess(xqLsjl);
+
+
+
+	}
+
 
 }
